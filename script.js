@@ -3,17 +3,20 @@ function Gameboard() {
     const rows = 3;
     const columns = 3;
 
-    for (let i = 0; i < rows; i++) {
+    // const createBoard = () => board;
 
-        board[i] = [];
+    const createBoard = () => {
+        for (let i = 0; i < rows; i++) {
+            board[i] = [];
 
-
-        for (let j = 0; j < columns; j++) {
-            board[i].push(' □ ');
+            for (let j = 0; j < columns; j++) {
+                board[i].push('_');
+            }
         }
+        return board;
     }
 
-    const createBoard = () => board;
+    createBoard();
 
 
     const printBoard = () => {
@@ -22,8 +25,6 @@ function Gameboard() {
         }
     }
 
-    // check winner
-    // should be just array with arrays?
     const winLines = [
         [[0, 0], [0, 1], [0, 2]],
         [[1, 0], [1, 1], [1, 2]],
@@ -35,52 +36,21 @@ function Gameboard() {
         [[2, 0], [1, 1], [0, 2]],
     ]
 
-
-    // const checkWin = (mark) => {
-    //     const lines = Object.values(winLines);
-
-    //     for (let i = 0; i < Object.keys(winLines).length; i++) {
-    //         console.log(i);
-    //         if (board[x][y] === winLines.i[x][y]) {
-    //             console.log('can we see the mark? ' + mark)
-    //         } else {
-    //             console.log('not the same')
-    //         }
-    //     }
-    // }
-
-    // easy mode
-    const checkWin = (mark) => {
-        console.log('start checking');
-
-        if (board[0][0] === mark && board[0][1] === mark && board[0][2] === mark) {
-            console.log('supersame 1 hor');
-            return true;
-        } else if (board[1][0] === mark && board[1][1] === mark && board[1][2] === mark) {
-            console.log('supersame 2 hor');
-            return true;
-        } else if (board[2][0] === mark && board[2][1] === mark && board[2][2] === mark) {
-            console.log('supersame 3 hor');
-            return true;
-        } else if (board[0][0] === mark && board[1][0] === mark && board[2][0] === mark) {
-            console.log('supersame 4 ver ');
-            return true;
-        } else if (board[0][1] === mark && board[1][1] === mark && board[2][1] === mark) {
-            console.log('supersame 5 ver');
-            return true;
-        } else if (board[0][2] === mark && board[1][2] === mark && board[2][2] === mark) {
-            console.log('supersame 6 ver');
-            return true;
-        } else if (board[0][0] === mark && board[1][1] === mark && board[2][2] === mark) {
-            console.log('supersame 7 diag');
-            return true;
-        } else if (board[2][0] === mark && board[1][1] === mark && board[0][2] === mark) {
-            console.log('supersame 8 diag');
-            return true;
-        } else {
-            console.log('no winner yet');
-            return false;
+    function checkWin(mark) {
+        for (let i = 0; i < winLines.length; i++) {
+            const line = winLines[i];
+            const coord1 = board[line[0][0]][line[0][1]];
+            const coord2 = board[line[1][0]][line[1][1]];
+            const coord3 = board[line[2][0]][line[2][1]];
+            if (coord1 === mark &&
+                coord2 === mark &&
+                coord3 === mark) {
+                console.log('FOUND WIN LINE');
+                return true;
+            }
         }
+        console.log('NO WIN LINES HERE');
+        return false;
     }
 
 
@@ -88,11 +58,10 @@ function Gameboard() {
     const addMark = (x, y, mark) => {
 
         function gameResult(success, winner) {
-
             return { success, winner }
         };
 
-        let emptyCell = ' □ ';
+        let emptyCell = '_';
         // STEP 1:
         if (x < board.length) {
             console.log('x is correct -> STEP 2');
@@ -117,7 +86,7 @@ function Gameboard() {
                         return weHaveWinner;
 
                     } else if (status === false) {
-                        console.log('no luck')
+                        console.log('no winner yet')
                         const noWinnerYet = gameResult(true, false);
                         console.log(noWinnerYet);
                         return noWinnerYet;
@@ -140,14 +109,14 @@ function Gameboard() {
 
     }
 
-    return { printBoard, addMark, checkWin }
+    return { printBoard, addMark, checkWin, createBoard }
 }
 
 const gameboard = Gameboard();
 gameboard.printBoard();
 
-function createPlayer(player, mark) {
-    return { player, mark }
+function createPlayer(name, mark) {
+    return { name, mark }
 }
 
 const playerOne = createPlayer("playerOne", "X");
@@ -155,27 +124,18 @@ const playerTwo = createPlayer("playerTwo", "O");
 
 function playerTurn(player, gameboard) {
 
-    // const testCases = {
-    //     case1: ['1,1', '1,2', '2,1', '2,2', '2,0', '0,1', '0,0', '1,0', '0,2']
+    // const getValue = () => {
+    //     console.log('getValue called');
+    //     let x = Number(prompt('choose x coordinate', ''));
+    //     let y = Number(prompt('choose y coordinate', ''));
+    //     console.log('getValue finished, return value');
+    //     return { x, y }
     // }
 
-    // console.log(testCases.case1)
-
-
-    const getValue = () => {
-        console.log('getValue called');
-        let x = Number(prompt('choose x coordinate', ''));
-        let y = Number(prompt('choose y coordinate', ''));
-        console.log('getValue finished, return value');
-        return { x, y }
-    }
-
     const temporaryRandomValue = () => {
-        console.log('getting random values');
         let threshold = 3;
         let x = Math.floor(Math.random() * threshold);
         let y = Math.floor(Math.random() * threshold);
-        console.log('random values captured');
         console.log(x);
         console.log(y);
 
@@ -183,7 +143,6 @@ function playerTurn(player, gameboard) {
     }
 
     const makeTurn = () => {
-        console.log('executing make turn');
         while (true) {
 
             // const coords = getValue();
@@ -202,56 +161,114 @@ function playerTurn(player, gameboard) {
     return { makeTurn }
 }
 
-const startGame = () => {
+
+function GameController() {
+
     let currentPlayer = playerOne;
     let turnLimit = 9;
     let turn = 0;
+    let gameFinished = false;
+    
+    /* game statistic is also an option, no? */
+    /*
+    function GameStatistic(playerOne, playerTwo, result) {
+        let playerOneWinCount = 0;
+        let playerTwoWinCount = 0;
+        let drawCount = 0;
 
-    while (turn < turnLimit) {
+        const getGameStatistic = () => {
+            if (playerOne is winner after the game is finished)
+            return playerOneStat ++ 1
+            else if (playerTwo is winner after the game is finished)
+            return playerTwoStat ++ 1
+            else (like if its a draw)
+            return drawCount ++ 1
+        }
+            and what's next? don't know yet.
+    }
+        */
+
+    const currentTurn = () => {
+        console.log(`${currentPlayer.name} is making his turn`);
         const result = playerTurn(currentPlayer, gameboard).makeTurn();
 
-        if (result.winner === true) {
-            console.log('AND THE WINNER IS...');
-            console.log(`${currentPlayer.player}`)
-            break;
-        } else if (result.winner === false) {
-            currentPlayer = currentPlayer === playerOne ? playerTwo : playerOne; // switch players
-            turn++;
-            if (turn === turnLimit) {
-                console.log('DRAW');
-                break;
-            }
-        }
-
-        console.log('result is ' + result);
-        console.log('end');
+        return result
     }
 
+    const startGame = () => {
+
+        if (gameFinished === true) {
+            console.log('game is finished');
+        } else {
+
+            while (turn < turnLimit) {
+                const result = currentTurn();
+
+                if (result.winner === true) {
+                    console.log('AND THE WINNER IS...');
+                    console.log(`${currentPlayer.name}`)
+                    break;
+                } else if (result.winner === false) {
+                    currentPlayer = currentPlayer === playerOne ? playerTwo : playerOne; // switch players
+                    
+                    turn++;
+                    if (turn === turnLimit) {
+                        console.log('DRAW');
+                        gameFinished = true;
+                        break;
+                    }
+                }
+
+                console.log(result);
+                console.log('end');
+            }
+        }
+        gameFinished = true;
+        newGame();
+    }
+
+    const newGame = () => {
+        let answer = confirm('Would you like to start new game?');
+        if (gameFinished === true) {
+            if (answer === true) {
+                restartGame();
+            } else if (answer === false) {
+                console.log('Ok! You can restart next time. Just type gameController.restartGame()');
+            }
+        }
+    }
+
+    const restartGame = () => {
+
+        gameboard.createBoard();
+        currentPlayer = playerOne;
+        turn = 0;
+        gameFinished = false;
+    
+        startGame();
+        console.log(`I see this if confirm dialog results in no?`)
+    }
+
+    return { startGame }
 }
 
-startGame();
-// playerTurn(playerOne, gameboard).makeTurn();
-// playerTurn(playerTwo, gameboard).makeTurn();
+const gameController = GameController();
+gameController.startGame();
 
 
-// X win in the last turn
-// gameboard.addMark(1, 1, 'X');
-// gameboard.addMark(1, 2, 'O');
-// gameboard.addMark(2, 1, 'X');
-// gameboard.addMark(2, 2, 'O');
-// gameboard.addMark(2, 0, 'X');
-// gameboard.addMark(0, 1, 'O');
-// gameboard.addMark(0, 0, 'X');
-// gameboard.addMark(1, 0, 'O');
-// gameboard.addMark(0, 2, 'X'); 
+/*
+nothing to see here yet
 
-// DRAW
-// gameboard.addMark(1, 1, 'X');
-// gameboard.addMark(0, 2, 'O');
-// gameboard.addMark(2, 1, 'X');
-// gameboard.addMark(2, 2, 'O');
-// gameboard.addMark(2, 0, 'X');
-// gameboard.addMark(0, 1, 'O');
-// gameboard.addMark(0, 0, 'X');
-// gameboard.addMark(1, 0, 'O');
-// gameboard.addMark(1, 2, 'X');
+function Cell() {
+    let value = 0;
+
+    const addPlayerMark = (player) => {
+        value = addMark(); ???    
+    }
+
+    const getValue = () => value;
+
+    return { addPlayerMark, getValue }
+}
+
+*/

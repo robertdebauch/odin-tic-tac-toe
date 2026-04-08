@@ -168,92 +168,114 @@ function GameController() {
     let turnLimit = 9;
     let turn = 0;
     let gameFinished = false;
-    
-    /* game statistic is also an option, no? */
-    /*
-    function GameStatistic(playerOne, playerTwo, result) {
-        let playerOneWinCount = 0;
-        let playerTwoWinCount = 0;
-        let drawCount = 0;
+    let gameResult;
 
-        const getGameStatistic = () => {
-            if (playerOne is winner after the game is finished)
-            return playerOneStat ++ 1
-            else if (playerTwo is winner after the game is finished)
-            return playerTwoStat ++ 1
-            else (like if its a draw)
-            return drawCount ++ 1
+    const GameStatistic = () => {
+        let playerOneWins = 0;
+        let playerTwoWins = 0;
+        let draws = 0;
+        let numberOfGames = 0;
+
+        const updateStats = (result) => {
+            if (result.winner) {
+                if (currentPlayer.name === playerOne.name) {
+                    playerOneWins++;
+                } else if (currentPlayer.name === playerTwo.name) {
+                    playerTwoWins++;
+                }
+            } else if (result.draw === true) {
+                draws++;
+            }
+            numberOfGames++;
         }
-            and what's next? don't know yet.
+
+        const showStats = () => {
+            console.log(`Player One Statistic: ${playerOneWins}`);
+            console.log(`Player Two Statistic: ${playerTwoWins}`);
+            console.log(`Number of Draws: ${draws}`);
+            console.log(`Total Number of Games: ${numberOfGames}`);
+        }
+
+        return { updateStats, showStats }
     }
-        */
+
+    const stats = GameStatistic();
 
     const currentTurn = () => {
-        console.log(`${currentPlayer.name} is making his turn`);
+        console.log(`round ${turn + 1} and ${currentPlayer.name} making his turn`);
         const result = playerTurn(currentPlayer, gameboard).makeTurn();
 
         return result
     }
 
-    const startGame = () => {
+    const gameCycle = () => {
 
-        if (gameFinished === true) {
-            console.log('game is finished');
-        } else {
+
+        while (gameFinished === false) {
 
             while (turn < turnLimit) {
+
                 const result = currentTurn();
 
                 if (result.winner === true) {
                     console.log('AND THE WINNER IS...');
                     console.log(`${currentPlayer.name}`)
+
+                    gameResult = { winner: currentPlayer.name };
+                    stats.updateStats(gameResult);
+                    gameFinished = true;
                     break;
+
                 } else if (result.winner === false) {
                     currentPlayer = currentPlayer === playerOne ? playerTwo : playerOne; // switch players
-                    
                     turn++;
+
                     if (turn === turnLimit) {
                         console.log('DRAW');
+                        gameResult = { draw: true }
+                        stats.updateStats(gameResult);
                         gameFinished = true;
                         break;
                     }
                 }
 
                 console.log(result);
-                console.log('end');
             }
+
+            console.log('current game status: ');
+            console.log(`finished? ${gameFinished}`);
+            console.log('and what is the result?');
+            console.log(gameResult);
+
+            stats.showStats();
+
+            let question = confirm('Would you like to start new game?');
+
+
+            if (question === true) {
+                gameFinished = false;
+                newGame();
+            } else if (question === false) {
+                console.log('Ok! You can restart next time.');
+                break;
+            }
+
         }
-        gameFinished = true;
-        newGame();
     }
 
     const newGame = () => {
-        let answer = confirm('Would you like to start new game?');
-        if (gameFinished === true) {
-            if (answer === true) {
-                restartGame();
-            } else if (answer === false) {
-                console.log('Ok! You can restart next time. Just type gameController.restartGame()');
-            }
-        }
-    }
-
-    const restartGame = () => {
-
         gameboard.createBoard();
         currentPlayer = playerOne;
         turn = 0;
+        gameResult = '';
         gameFinished = false;
-    
-        startGame();
-        console.log(`I see this if confirm dialog results in no?`)
     }
 
-    return { startGame }
+    return { gameCycle, GameStatistic }
 }
 
 const gameController = GameController();
-gameController.startGame();
+gameController.gameCycle();
 
 
 /*

@@ -1,16 +1,35 @@
+function Cell() {
+    let value = "_";
+
+    const getValue = () => value;
+
+    const setValue = (mark) => {
+        value = mark;
+    }
+
+    const isEmpty = () => {
+        if (value === "_") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    return { setValue, getValue, isEmpty }
+}
+
 function Gameboard() {
     const board = [];
     const rows = 3;
     const columns = 3;
 
-    // const createBoard = () => board;
-
+    // new version    
     const createBoard = () => {
         for (let i = 0; i < rows; i++) {
             board[i] = [];
 
             for (let j = 0; j < columns; j++) {
-                board[i].push('_');
+                board[i].push(Cell());
             }
         }
         return board;
@@ -18,10 +37,10 @@ function Gameboard() {
 
     createBoard();
 
-
+    // new version
     const printBoard = () => {
         for (let i = 0; i < board.length; i++) {
-            console.log(board[i].join(''));
+            console.log(board[i].map(cell => cell.getValue()).join(''));
         }
     }
 
@@ -37,22 +56,8 @@ function Gameboard() {
     ]
 
     function checkWin(mark) {
-        for (let i = 0; i < winLines.length; i++) {
-            const line = winLines[i];
-            const coord1 = board[line[0][0]][line[0][1]];
-            const coord2 = board[line[1][0]][line[1][1]];
-            const coord3 = board[line[2][0]][line[2][1]];
-            if (coord1 === mark &&
-                coord2 === mark &&
-                coord3 === mark) {
-                console.log('FOUND WIN LINE');
-                return true;
-            }
-        }
-        console.log('NO WIN LINES HERE');
-        return false;
+        return winLines.some(line => line.every(([x, y]) => board[x][y].getValue() === mark));
     }
-
 
     // STEP 0
     const addMark = (x, y, mark) => {
@@ -61,23 +66,18 @@ function Gameboard() {
             return { success, winner }
         };
 
-        let emptyCell = '_';
-        // STEP 1:
-        if (x < board.length) {
-            console.log('x is correct -> STEP 2');
+            // STEP 1:
+            if (x < board.length && y < board[x].length) {
+                console.log('y is correct -> STEP 2');
+                const cell = board[x][y];
 
-            // STEP 2:
-            if (y < board[x].length) {
-                console.log('y is correct -> STEP 3');
-
-                // STEP 3:
-                if (board[x][y] === emptyCell) {
+                // STEP 2:
+                if (cell.isEmpty()) {
                     console.log('cell is empty, proceed');
 
-                    board[x][y] = mark;
+                    cell.setValue(mark);
                     printBoard();
-
-                    let status = checkWin(mark);
+                    const status = checkWin(mark);
 
                     if (status === true) {
                         console.log('we have winner');
@@ -102,12 +102,63 @@ function Gameboard() {
                 return false;
             }
 
-        } else {
-            console.log('x is out of range, back to STEP 0');
-            return false;
-        }
-
     }
+
+    // old
+    // const addMark = (x, y, mark) => {
+
+    //     function gameResult(success, winner) {
+    //         return { success, winner }
+    //     };
+
+    //     // let emptyCell = '_';
+
+    //     // STEP 1:
+    //     if (x < board.length) {
+    //         console.log('x is correct -> STEP 2');
+
+    //         // STEP 2:
+    //         if (y < board[x].length) {
+    //             console.log('y is correct -> STEP 3');
+
+    //             // STEP 3:
+    //             if (board[x][y] === emptyCell) {
+    //                 console.log('cell is empty, proceed');
+
+    //                 board[x][y] = mark;
+    //                 printBoard();
+
+    //                 let status = checkWin(mark);
+
+    //                 if (status === true) {
+    //                     console.log('we have winner');
+    //                     const weHaveWinner = gameResult(true, true);
+    //                     console.log(weHaveWinner);
+    //                     return weHaveWinner;
+
+    //                 } else if (status === false) {
+    //                     console.log('no winner yet')
+    //                     const noWinnerYet = gameResult(true, false);
+    //                     console.log(noWinnerYet);
+    //                     return noWinnerYet;
+    //                 }
+
+    //             } else {
+    //                 console.log('cell is NOT empty, back to STEP 0');
+    //                 return false;
+    //             }
+
+    //         } else {
+    //             console.log('y is out of range, back to STEP 0');
+    //             return false;
+    //         }
+
+    //     } else {
+    //         console.log('x is out of range, back to STEP 0');
+    //         return false;
+    //     }
+
+    // }
 
     return { printBoard, addMark, checkWin, createBoard }
 }
@@ -147,11 +198,11 @@ function playerTurn(player, gameboard) {
 
             // const coords = getValue();
             const coords = temporaryRandomValue();
-            const OUTCOME = gameboard.addMark(coords.x, coords.y, player.mark);
-            if (OUTCOME !== false) {
+            const outcome = gameboard.addMark(coords.x, coords.y, player.mark);
+            if (outcome !== false) {
 
-                console.log('OUTCOME IS ' + OUTCOME.winner)
-                return OUTCOME;
+                console.log('outcome IS ' + outcome.winner)
+                return outcome;
             } else {
                 console.log('invalid values, please try again')
             }
@@ -277,20 +328,3 @@ function GameController() {
 const gameController = GameController();
 gameController.gameCycle();
 
-
-/*
-nothing to see here yet
-
-function Cell() {
-    let value = 0;
-
-    const addPlayerMark = (player) => {
-        value = addMark(); ???    
-    }
-
-    const getValue = () => value;
-
-    return { addPlayerMark, getValue }
-}
-
-*/

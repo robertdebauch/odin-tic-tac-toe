@@ -66,99 +66,43 @@ function Gameboard() {
             return { success, winner }
         };
 
-            // STEP 1:
-            if (x < board.length && y < board[x].length) {
-                console.log('y is correct -> STEP 2');
-                const cell = board[x][y];
+        // STEP 1:
+        if (x < board.length && y < board[x].length) {
+            console.log('y is correct -> STEP 2');
+            const cell = board[x][y];
 
-                // STEP 2:
-                if (cell.isEmpty()) {
-                    console.log('cell is empty, proceed');
+            // STEP 2:
+            if (cell.isEmpty()) {
+                console.log('cell is empty, proceed');
 
-                    cell.setValue(mark);
-                    printBoard();
-                    const status = checkWin(mark);
+                cell.setValue(mark);
+                printBoard();
+                const status = checkWin(mark);
 
-                    if (status === true) {
-                        console.log('we have winner');
-                        const weHaveWinner = gameResult(true, true);
-                        console.log(weHaveWinner);
-                        return weHaveWinner;
+                if (status === true) {
+                    console.log('we have winner');
+                    const weHaveWinner = gameResult(true, true);
+                    console.log(weHaveWinner);
+                    return weHaveWinner;
 
-                    } else if (status === false) {
-                        console.log('no winner yet')
-                        const noWinnerYet = gameResult(true, false);
-                        console.log(noWinnerYet);
-                        return noWinnerYet;
-                    }
-
-                } else {
-                    console.log('cell is NOT empty, back to STEP 0');
-                    return false;
+                } else if (status === false) {
+                    console.log('no winner yet')
+                    const noWinnerYet = gameResult(true, false);
+                    console.log(noWinnerYet);
+                    return noWinnerYet;
                 }
 
             } else {
-                console.log('y is out of range, back to STEP 0');
+                console.log('cell is NOT empty, back to STEP 0');
                 return false;
             }
 
+        } else {
+            console.log('y is out of range, back to STEP 0');
+            return false;
+        }
+
     }
-
-    // old
-    // const addMark = (x, y, mark) => {
-
-    //     function gameResult(success, winner) {
-    //         return { success, winner }
-    //     };
-
-    //     // let emptyCell = '_';
-
-    //     // STEP 1:
-    //     if (x < board.length) {
-    //         console.log('x is correct -> STEP 2');
-
-    //         // STEP 2:
-    //         if (y < board[x].length) {
-    //             console.log('y is correct -> STEP 3');
-
-    //             // STEP 3:
-    //             if (board[x][y] === emptyCell) {
-    //                 console.log('cell is empty, proceed');
-
-    //                 board[x][y] = mark;
-    //                 printBoard();
-
-    //                 let status = checkWin(mark);
-
-    //                 if (status === true) {
-    //                     console.log('we have winner');
-    //                     const weHaveWinner = gameResult(true, true);
-    //                     console.log(weHaveWinner);
-    //                     return weHaveWinner;
-
-    //                 } else if (status === false) {
-    //                     console.log('no winner yet')
-    //                     const noWinnerYet = gameResult(true, false);
-    //                     console.log(noWinnerYet);
-    //                     return noWinnerYet;
-    //                 }
-
-    //             } else {
-    //                 console.log('cell is NOT empty, back to STEP 0');
-    //                 return false;
-    //             }
-
-    //         } else {
-    //             console.log('y is out of range, back to STEP 0');
-    //             return false;
-    //         }
-
-    //     } else {
-    //         console.log('x is out of range, back to STEP 0');
-    //         return false;
-    //     }
-
-    // }
 
     return { printBoard, addMark, checkWin, createBoard }
 }
@@ -166,51 +110,12 @@ function Gameboard() {
 const gameboard = Gameboard();
 gameboard.printBoard();
 
-function createPlayer(name, mark) {
-    return { name, mark }
+function createPlayer(name, mark, type = 'human') {
+    return { name, mark, type }
 }
 
-const playerOne = createPlayer("playerOne", "X");
-const playerTwo = createPlayer("playerTwo", "O");
-
-function playerTurn(player, gameboard) {
-
-    // const getValue = () => {
-    //     console.log('getValue called');
-    //     let x = Number(prompt('choose x coordinate', ''));
-    //     let y = Number(prompt('choose y coordinate', ''));
-    //     console.log('getValue finished, return value');
-    //     return { x, y }
-    // }
-
-    const temporaryRandomValue = () => {
-        let threshold = 3;
-        let x = Math.floor(Math.random() * threshold);
-        let y = Math.floor(Math.random() * threshold);
-        console.log(x);
-        console.log(y);
-
-        return { x, y }
-    }
-
-    const makeTurn = () => {
-        while (true) {
-
-            // const coords = getValue();
-            const coords = temporaryRandomValue();
-            const outcome = gameboard.addMark(coords.x, coords.y, player.mark);
-            if (outcome !== false) {
-
-                console.log('outcome IS ' + outcome.winner)
-                return outcome;
-            } else {
-                console.log('invalid values, please try again')
-            }
-        }
-    }
-
-    return { makeTurn }
-}
+const playerOne = createPlayer("playerOne", "X", 'human');
+const playerTwo = createPlayer("playerTwo", "O", 'computer');
 
 
 function GameController() {
@@ -220,6 +125,40 @@ function GameController() {
     let turn = 0;
     let gameFinished = false;
     let gameResult;
+
+    function createTurn(coordinates) {
+
+        const makeTurn = () => {
+            while (true) {
+
+                const coords = coordinates();
+                const outcome = gameboard.addMark(coords.x, coords.y, currentPlayer.mark);
+                if (outcome !== false) {
+
+                    console.log('outcome IS ' + outcome.winner)
+                    return outcome;
+                } else {
+                    console.log('invalid values, please try again')
+                }
+            }
+        }
+
+        return { makeTurn }
+    }
+
+    function humanTurn() {
+        let x = Number(prompt('choose x coordinate', ''));
+        let y = Number(prompt('choose y coordinate', ''));
+        return { x, y }
+    }
+
+    function computerTurn() {
+        let threshold = 3;
+        let x = Math.floor(Math.random() * threshold);
+        let y = Math.floor(Math.random() * threshold);
+
+        return { x, y }
+    }
 
     const GameStatistic = () => {
         let playerOneWins = 0;
@@ -253,10 +192,17 @@ function GameController() {
     const stats = GameStatistic();
 
     const currentTurn = () => {
-        console.log(`round ${turn + 1} and ${currentPlayer.name} making his turn`);
-        const result = playerTurn(currentPlayer, gameboard).makeTurn();
+        let coordinates;
 
-        return result
+        console.log(`round ${turn + 1} and ${currentPlayer.name} making his turn`);
+
+        if (currentPlayer.type === 'human') {
+            coordinates = humanTurn;
+        } else if (currentPlayer.type === 'computer') {
+            coordinates = computerTurn;
+        }
+        const result = createTurn(coordinates).makeTurn();
+        return result;
     }
 
     const gameCycle = () => {

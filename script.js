@@ -107,18 +107,23 @@ function Gameboard() {
     return { printBoard, addMark, checkWin, createBoard }
 }
 
-const gameboard = Gameboard();
-gameboard.printBoard();
 
 function createPlayer(name, mark, type = 'human') {
     return { name, mark, type }
 }
 
-const playerOne = createPlayer("playerOne", "X", 'human');
-const playerTwo = createPlayer("playerTwo", "O", 'computer');
+function chooseGameMode() {
+    let choice = prompt("Computer or human?", "");
+
+    if (choice === 'computer') {
+        return createPlayer("playerTwo", "O", "computer");
+    } else if (choice === 'human') {
+        return createPlayer("playerTwo", "O", "human");
+    }
+}
 
 
-function GameController() {
+function GameController(gameboard, playerOne, playerTwo) {
 
     let currentPlayer = playerOne;
     let turnLimit = 9;
@@ -271,6 +276,14 @@ function GameController() {
     return { gameCycle, GameStatistic }
 }
 
-const gameController = GameController();
-gameController.gameCycle();
 
+function initializeGame() {
+    const gameboard = Gameboard();
+    gameboard.printBoard();
+    const playerOne = createPlayer("playerOne", "X", 'human');
+    const playerTwo = chooseGameMode();
+    const gameController = GameController(gameboard, playerOne, playerTwo);
+    gameController.gameCycle();
+}
+
+initializeGame();

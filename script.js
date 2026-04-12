@@ -22,8 +22,7 @@ function Gameboard() {
     const board = [];
     const rows = 3;
     const columns = 3;
-
-    // new version    
+  
     const createBoard = () => {
         for (let i = 0; i < rows; i++) {
             board[i] = [];
@@ -37,7 +36,6 @@ function Gameboard() {
 
     createBoard();
 
-    // new version
     const printBoard = () => {
         for (let i = 0; i < board.length; i++) {
             console.log(board[i].map(cell => cell.getValue()).join(''));
@@ -54,6 +52,14 @@ function Gameboard() {
         [[0, 0], [1, 1], [2, 2]],
         [[2, 0], [1, 1], [0, 2]],
     ]
+
+    const getWinLines = () => {
+        return winLines;
+    }
+
+    const getCell = (x, y) => {
+        return board[x][y];
+    }
 
     function checkWin(mark) {
         return winLines.some(line => line.every(([x, y]) => board[x][y].getValue() === mark));
@@ -104,7 +110,7 @@ function Gameboard() {
 
     }
 
-    return { printBoard, addMark, checkWin, createBoard }
+    return { printBoard, addMark, checkWin, createBoard, getWinLines, getCell }
 }
 
 
@@ -122,7 +128,6 @@ function chooseGameMode() {
     }
 }
 
-
 function GameController(gameboard, playerOne, playerTwo) {
 
     let currentPlayer = playerOne;
@@ -130,6 +135,32 @@ function GameController(gameboard, playerOne, playerTwo) {
     let turn = 0;
     let gameFinished = false;
     let gameResult;
+
+    /* */
+    function findBestMove(mark) {
+        const winlines = gameboard.getWinLines();
+
+        for (let i = 0; i < winlines.length; i++) {
+            let line = winlines[i];
+            let marksCount = 0;
+            let threshold = 2;
+            let emptyCellPosition = null;
+            for (let j = 0; j < line.length; j++) {
+                const [x, y] = line[j]; 
+                const cell = gameboard.getCell(x, y);
+                if (cell.getValue() === mark) {
+                    marksCount++;
+                } else if (cell.isEmpty()) {
+                    emptyCellPosition = { x, y };
+                }
+            }
+            //
+            if (marksCount === threshold && emptyCellPosition) {
+                return emptyCellPosition;
+            }
+        }
+        return null;
+    }
 
     function createTurn(coordinates) {
 
@@ -158,11 +189,30 @@ function GameController(gameboard, playerOne, playerTwo) {
     }
 
     function computerTurn() {
-        let threshold = 3;
-        let x = Math.floor(Math.random() * threshold);
-        let y = Math.floor(Math.random() * threshold);
+        // find comp move
+        const bestMove = findBestMove('O'); // not flexible enough, what about playerTwo.mark
+        if (bestMove) {
+            console.log('THE COMPUTER FOUND HIS THE BEST MOVE! HE IS READY TO USE IT! AND...')
+            return bestMove;
+        }
+        // analyze human move
+        const blockMove = findBestMove('X'); // human move
+        if (blockMove) {
+            console.log('THE COMPUTER FOUND YOUR BEST MOVE! HE IS GONNA BLOCK IT ANY MOMENT! AND...');
+            return blockMove;
+        }
 
-        return { x, y }
+        // randomization
+        let x;
+        let y;
+        let threshold = 3;
+
+        do {
+        x = Math.floor(Math.random() * threshold);
+        y = Math.floor(Math.random() * threshold);
+        } while (!gameboard.getCell(x,y).isEmpty());
+
+        return {x, y};
     }
 
     const GameStatistic = () => {

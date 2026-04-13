@@ -1,5 +1,6 @@
 function Cell() {
-    let value = "_";
+    const EMPTY_CELL = "_";
+    let value = EMPTY_CELL;
 
     const getValue = () => value;
 
@@ -8,7 +9,7 @@ function Cell() {
     }
 
     const isEmpty = () => {
-        if (value === "_") {
+        if (value === EMPTY_CELL) {
             return true;
         } else {
             return false;
@@ -22,7 +23,7 @@ function Gameboard() {
     const board = [];
     const rows = 3;
     const columns = 3;
-  
+
     const createBoard = () => {
         for (let i = 0; i < rows; i++) {
             board[i] = [];
@@ -31,7 +32,6 @@ function Gameboard() {
                 board[i].push(Cell());
             }
         }
-        return board;
     }
 
     createBoard();
@@ -65,12 +65,12 @@ function Gameboard() {
         return winLines.some(line => line.every(([x, y]) => board[x][y].getValue() === mark));
     }
 
+    function gameResult(success, winner) {
+        return { success, winner }
+    };
+
     // STEP 0
     const addMark = (x, y, mark) => {
-
-        function gameResult(success, winner) {
-            return { success, winner }
-        };
 
         // STEP 1:
         if (x < board.length && y < board[x].length) {
@@ -125,6 +125,8 @@ function chooseGameMode() {
         return createPlayer("playerTwo", "O", "computer");
     } else if (choice === 'human') {
         return createPlayer("playerTwo", "O", "human");
+    } else {
+        return createPlayer("playerTwo", "O", "computer");
     }
 }
 
@@ -136,7 +138,7 @@ function GameController(gameboard, playerOne, playerTwo) {
     let gameFinished = false;
     let gameResult;
 
-    /* */
+
     function findBestMove(mark) {
         const winlines = gameboard.getWinLines();
 
@@ -146,7 +148,7 @@ function GameController(gameboard, playerOne, playerTwo) {
             let threshold = 2;
             let emptyCellPosition = null;
             for (let j = 0; j < line.length; j++) {
-                const [x, y] = line[j]; 
+                const [x, y] = line[j];
                 const cell = gameboard.getCell(x, y);
                 if (cell.getValue() === mark) {
                     marksCount++;
@@ -189,30 +191,29 @@ function GameController(gameboard, playerOne, playerTwo) {
     }
 
     function computerTurn() {
-        // find comp move
-        const bestMove = findBestMove('O'); // not flexible enough, what about playerTwo.mark
-        if (bestMove) {
+
+        const bestCompMove = findBestMove('O');
+        if (bestCompMove) {
             console.log('THE COMPUTER FOUND HIS THE BEST MOVE! HE IS READY TO USE IT! AND...')
-            return bestMove;
-        }
-        // analyze human move
-        const blockMove = findBestMove('X'); // human move
-        if (blockMove) {
-            console.log('THE COMPUTER FOUND YOUR BEST MOVE! HE IS GONNA BLOCK IT ANY MOMENT! AND...');
-            return blockMove;
+            return bestCompMove;
         }
 
-        // randomization
+        const blockHumanMove = findBestMove('X');
+        if (blockHumanMove) {
+            console.log('THE COMPUTER FOUND YOUR BEST MOVE! HE IS GONNA BLOCK IT ANY MOMENT! AND...');
+            return blockHumanMove;
+        }
+
         let x;
         let y;
         let threshold = 3;
 
         do {
-        x = Math.floor(Math.random() * threshold);
-        y = Math.floor(Math.random() * threshold);
-        } while (!gameboard.getCell(x,y).isEmpty());
+            x = Math.floor(Math.random() * threshold);
+            y = Math.floor(Math.random() * threshold);
+        } while (!gameboard.getCell(x, y).isEmpty());
 
-        return {x, y};
+        return { x, y };
     }
 
     const GameStatistic = () => {
@@ -223,9 +224,9 @@ function GameController(gameboard, playerOne, playerTwo) {
 
         const updateStats = (result) => {
             if (result.winner) {
-                if (currentPlayer.name === playerOne.name) {
+                if (result.name === playerOne.name) {
                     playerOneWins++;
-                } else if (currentPlayer.name === playerTwo.name) {
+                } else if (result.name === playerTwo.name) {
                     playerTwoWins++;
                 }
             } else if (result.draw === true) {

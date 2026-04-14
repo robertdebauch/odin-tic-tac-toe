@@ -224,9 +224,9 @@ function GameController(gameboard, playerOne, playerTwo) {
 
         const updateStats = (result) => {
             if (result.winner) {
-                if (result.name === playerOne.name) {
+                if (result.winner === playerOne.name) {
                     playerOneWins++;
-                } else if (result.name === playerTwo.name) {
+                } else if (result.winner === playerTwo.name) {
                     playerTwoWins++;
                 }
             } else if (result.draw === true) {
@@ -337,4 +337,4 @@ function initializeGame() {
     gameController.gameCycle();
 }
 
-initializeGame();
+// initializeGame();

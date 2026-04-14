@@ -1,0 +1,240 @@
+:root {
+    --primary-color: #ffffff;
+    --text-color: #131313;
+    --pve-color: #ff0b00;
+    --pvp-color: #5b631c;
+    --element-color: #8d9387;
+    --background-color: #837667;
+}
+
+html {
+    font-family: "Kantumruy Pro", Arial, Helvetica, sans-serif;
+    color: var(--text-color);
+}
+
+body {
+    background-color: var(--background-color);
+    text-align: center;
+}
+
+.wrapper {
+    margin: 0 auto;
+    width: 1120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+
+/* header */
+header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 220px;
+    gap: 2rem;
+}
+
+header .gamename {
+    height: 92px;
+    align-self: center;
+    display: flex;
+    background-color: var(--primary-color);
+    border: 1px solid var(--text-color);
+    padding: 0.5rem 3.5rem;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.gamename h1 {
+    font-size: 4rem;
+    font-weight: 300;
+}
+
+header button {
+    border: none;
+    width: 156px;
+    font-size: 3.25rem;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#pve {
+    background-color: var(--pve-color);
+    mask: url('assets/decoration/flag-mask.svg') no-repeat center / contain;
+    -webkit-mask: url('assets/decoration/flag-mask.svg') no-repeat center / contain;
+}
+
+#pvp {
+    background-color: var(--pvp-color);
+    mask: url('assets/decoration/flag-mask.svg') no-repeat center / contain;
+    -webkit-mask: url('assets/decoration/flag-mask.svg') no-repeat center / contain;
+}
+
+#pve:hover, #pvp:hover {
+    fill: var(--primary-color);
+    color: var(--primary-color);
+}
+
+header button svg {
+    width: 4rem;
+}
+
+/* instruction */
+
+section.instruction {
+    height: 3rem;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    background-color: var(--primary-color);
+    border: 1px solid var(--text-color);
+}
+
+.instruction .step {
+    display: flex;
+    justify-content: center;
+    gap: .75rem;
+    align-items: center;
+    border-left: 1px solid var(--text-color);
+}
+
+.instruction :first-child {
+    border-left: none;
+}
+
+.step span {
+    font-size: 1.5rem;
+}
+
+/* main */
+
+main {
+    display: grid;
+    grid-template-columns: repeat(12, 64px);
+    gap: 32px;
+}
+
+main>aside {
+    grid-column: 1 / 6;
+}
+
+main>.gameboard {
+    grid-column: 6 / 13;
+}
+
+/* aside */
+
+aside {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+aside .gamemode-info {
+    background-color: var(--primary-color);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    font-size: 2rem;
+}
+
+.gamemode-info> :first-child,
+.gamemode-info> :last-child {
+    font-weight: 700;
+    font-style: italic;
+}
+
+.gamemode-info :first-child {
+    color: var(--pvp-color);
+}
+
+.gamemode-info :last-child {
+    color: var(--pve-color);
+}
+
+.gamelog {
+    background-color: var(--primary-color);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.gamelog-info {
+    padding: 1rem 0.5rem;
+}
+
+.gamelog .ui-panel {
+    text-align: left;
+    width: 100%;
+    background-color: var(--element-color);
+    padding: .25rem .5rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+aside .gamestats {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--primary-color);
+}
+
+.gamestats .table-row {
+    display: flex;
+    justify-content: space-between;
+    padding: .75rem 0.5rem;
+    border-bottom: 1px solid var(--element-color);
+}
+
+.gamestats :last-child {
+    border-bottom: none;
+}
+
+
+
+/* gameboard */
+
+.gameboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.gameboard>.cell {
+    min-height: 200px;
+    background-color: var(--primary-color);
+    font-size: 4rem;
+    border: 1px solid var(--element-color);
+}
+
+/* .gameboard>.cell:hover {
+    box-shadow:
+        inset 4px 4px 44px #000000,
+        inset -4px -4px 44px #000000;
+} */
+
+/* panels */
+.ui-panel {
+    background-color: var(--element-color);
+    padding: .25rem .5rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.game-stat {
+    position: absolute;
+    bottom: 260px;
+}
+
+.game-board {
+    position: absolute;
+    right: 768px;
+    bottom: 260px;
+}

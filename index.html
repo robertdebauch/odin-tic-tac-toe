@@ -1,14 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
     <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
-    
+    <div class="wrapper">
+        <header>
+            <button class="gamemode" id="pvp">PVP
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <title>karate</title>
+                    <path
+                        d="M19.8 2L11.6 8.7L10.39 7.66L14 5.58L9.41 1L8 2.41L10.74 5.15L5 8.46L3.81 12.75L6.27 17L8 16L5.97 12.5L6.32 11.18L9.5 13L10 22H12L12.5 12L21 3.4L19.8 2M5 3C6.11 3 7 3.9 7 5S6.11 7 5 7 3 6.11 3 5 3.9 3 5 3Z" />
+                </svg>
+            </button>
+            <div class="gamename">
+                <h1>Tic Tac Toe</h1>
+                <img src="assets/decoration/tictactoelogo.svg" alt="tic tac toe game logo">
+                <!-- <button id="restart">AGAIN</button> IN DOM -->
+            </div>
+            <button class="gamemode" id="pve">PVE
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <title>robot-angry</title>
+                    <path
+                        d="M22 14H21C21 10.13 17.87 7 14 7H13V5.73C13.6 5.39 14 4.74 14 4C14 2.9 13.11 2 12 2S10 2.9 10 4C10 4.74 10.4 5.39 11 5.73V7H10C6.13 7 3 10.13 3 14H2C1.45 14 1 14.45 1 15V18C1 18.55 1.45 19 2 19H3V20C3 21.11 3.9 22 5 22H19C20.11 22 21 21.11 21 20V19H22C22.55 19 23 18.55 23 18V15C23 14.45 22.55 14 22 14M7.5 18C6.12 18 5 16.88 5 15.5C5 14.68 5.4 13.96 6 13.5L9.83 16.38C9.5 17.32 8.57 18 7.5 18M16.5 18C15.43 18 14.5 17.32 14.17 16.38L18 13.5C18.6 13.96 19 14.68 19 15.5C19 16.88 17.88 18 16.5 18Z" />
+                </svg>
+            </button>
+        </header>
+        <section class="instruction">
+            <div class="step">
+                <span>choose mode</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-swords-icon lucide-swords">
+                    <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+                    <line x1="13" x2="19" y1="19" y2="13" />
+                    <line x1="16" x2="20" y1="16" y2="20" />
+                    <line x1="19" x2="21" y1="21" y2="19" />
+                    <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" />
+                    <line x1="5" x2="9" y1="14" y2="18" />
+                    <line x1="7" x2="4" y1="17" y2="20" />
+                    <line x1="3" x2="5" y1="19" y2="21" />
+                </svg>
+            </div>
+            <div class="step">
+                <span>make moves</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-grip-icon lucide-grip">
+                    <circle cx="12" cy="5" r="1" />
+                    <circle cx="19" cy="5" r="1" />
+                    <circle cx="5" cy="5" r="1" />
+                    <circle cx="12" cy="12" r="1" />
+                    <circle cx="19" cy="12" r="1" />
+                    <circle cx="5" cy="12" r="1" />
+                    <circle cx="12" cy="19" r="1" />
+                    <circle cx="19" cy="19" r="1" />
+                    <circle cx="5" cy="19" r="1" />
+                </svg>
+            </div>
+            <div class="step">
+                <span>see results</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-crown-icon lucide-crown">
+                    <path
+                        d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" />
+                    <path d="M5 21h14" />
+                </svg>
+            </div>
+            <div class="step">
+                <span>play again!</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-smile-icon lucide-smile">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                    <line x1="9" x2="9.01" y1="9" y2="9" />
+                    <line x1="15" x2="15.01" y1="9" y2="9" />
+                </svg>
+            </div>
+        </section>
+        <main>
+            <aside>
+                <div class="gamemode-info">
+                    <div class="playerOne">HUMANOID</div>
+                    <div>VS</div>
+                    <div class="playerTwo">COMPUTOR</div>
+                </div>
+                <div class="gamelog">
+                    <div class="ui-panel">gameinfo</div>
+                    <div class="gamelog-info">
+                        <p>somehow there is the text</p>
+                        <p>somehow there is the text</p>
+                        <p>somehow there is the text</p>
+                        <p>somehow there is the text</p>
+                    </div>
+                </div>
+                <div class="gamestats">
+                    <div class="table-row">
+                        <div class="row-name">Number of Games</div>
+                        <div class="row-value">0</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="row-name">PlayerOne Wins</div>
+                        <div class="row-value">0</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="row-name">PlayerTwo Wins</div>
+                        <div class="row-value">0</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="row-name">Number of Draws</div>
+                        <div class="row-value">0</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- will be dynamic -->
+            <div class="gameboard">
+                <button data-row="0" data-col="0" class="cell">?</button>
+                <button data-row="0" data-col="1" class="cell">?</button>
+                <button data-row="0" data-col="2" class="cell">?</button>
+                <button data-row="1" data-col="0" class="cell">?</button>
+                <button data-row="1" data-col="1" class="cell">?</button>
+                <button data-row="1" data-col="2" class="cell">?</button>
+                <button data-row="2" data-col="0" class="cell">?</button>
+                <button data-row="2" data-col="1" class="cell">?</button>
+                <button data-row="2" data-col="2" class="cell">?</button>
+            </div>
+
+            <div class="ui-panel game-stat">gamestat2000</div>
+            <div class="ui-panel game-board">gameboard</div>
+        </main>
+    </div>
 </body>
 <script src="script.js"></script>
+
 </html>

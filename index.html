@@ -36,6 +36,7 @@
                 </svg>
             </button>
         </header>
+        <button id="restart">new game</button>
         <section class="instruction">
             <div class="step">
                 <span>choose mode</span>
@@ -109,38 +110,35 @@
                 <div class="gamestats">
                     <div class="table-row">
                         <div class="row-name">Number of Games</div>
-                        <div class="row-value">0</div>
+                        <div id="games_number" class="row-value">0</div>
                     </div>
                     <div class="table-row">
                         <div class="row-name">PlayerOne Wins</div>
-                        <div class="row-value">0</div>
+                        <div id="one_stat" class="row-value">0</div>
                     </div>
                     <div class="table-row">
                         <div class="row-name">PlayerTwo Wins</div>
-                        <div class="row-value">0</div>
+                        <div id="two_stat" class="row-value">0</div>
                     </div>
                     <div class="table-row">
                         <div class="row-name">Number of Draws</div>
-                        <div class="row-value">0</div>
+                        <div id="draw_stat" class="row-value">0</div>
                     </div>
                 </div>
             </aside>
 
-            <!-- will be dynamic -->
+            <!-- will be dynamic? why? -->
             <div class="gameboard">
-                <button data-row="0" data-col="0" class="cell">?</button>
-                <button data-row="0" data-col="1" class="cell">?</button>
-                <button data-row="0" data-col="2" class="cell">?</button>
-                <button data-row="1" data-col="0" class="cell">?</button>
-                <button data-row="1" data-col="1" class="cell">?</button>
-                <button data-row="1" data-col="2" class="cell">?</button>
-                <button data-row="2" data-col="0" class="cell">?</button>
-                <button data-row="2" data-col="1" class="cell">?</button>
-                <button data-row="2" data-col="2" class="cell">?</button>
+                <button data-row="0" data-col="0" class="cell"></button>
+                <button data-row="0" data-col="1" class="cell"></button>
+                <button data-row="0" data-col="2" class="cell"></button>
+                <button data-row="1" data-col="0" class="cell"></button>
+                <button data-row="1" data-col="1" class="cell"></button>
+                <button data-row="1" data-col="2" class="cell"></button>
+                <button data-row="2" data-col="0" class="cell"></button>
+                <button data-row="2" data-col="1" class="cell"></button>
+                <button data-row="2" data-col="2" class="cell"></button>
             </div>
-
-            <div class="ui-panel game-stat">gamestat2000</div>
-            <div class="ui-panel game-board">gameboard</div>
         </main>
     </div>
 </body>

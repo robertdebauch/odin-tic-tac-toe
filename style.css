@@ -170,6 +170,13 @@ aside .gamemode-info {
 
 .gamelog-info {
     padding: 1rem 0.5rem;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: 0.25rem;
+    scrollbar-color: var(--element-color);
+    scroll-behavior: smooth;
+
 }
 
 .gamelog .ui-panel {
@@ -180,6 +187,22 @@ aside .gamemode-info {
     color: var(--primary-color);
     font-weight: 600;
 }
+
+.gamelog-info .infotext {
+    font-family: monospace;
+    text-align: left;
+    line-height: 1.55;
+    color: var(--text-color);
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* .gamelog-info .infotext::before {
+  content: url("/assets/decoration/message-circle.svg");
+  width: 24px;
+  height: 24px;
+} */
 
 aside .gamestats {
     display: flex;

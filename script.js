@@ -4,6 +4,21 @@ const playerOne = createPlayer("playerOne", "X", 'human');
 const playerTwo = createPlayer("playerTwo", "O", 'computer');
 const gameController = GameController(gameboard, playerOne, playerTwo);
 
+const messageBoard = document.querySelector('.gamelog-info');
+
+
+
+function displayInformation(text) {
+    let information = document.createElement('p');
+    information.textContent = text;
+    information.classList.add('infotext');
+    messageBoard.appendChild(information);
+
+    setTimeout(() => {
+        messageBoard.scrollTop = messageBoard.scrollHeight;
+    }, 10);
+}
+
 function Cell() {
     const EMPTY_CELL = "_";
     let value = EMPTY_CELL;
@@ -27,7 +42,7 @@ function Cell() {
 
 function renderBoard(gameboard) {
     if (!gameboard) {
-        console.error('renderBoard: gameboard is undefined');
+        displayInformation('renderBoard: gameboard is undefined')
         return;
     }
     const cells = document.querySelectorAll('.cell');
@@ -35,16 +50,15 @@ function renderBoard(gameboard) {
         const row = parseInt(cell.dataset.row);
         const col = parseInt(cell.dataset.col);
         if (isNaN(row) || isNaN(col)) {
-            console.error('Invalid row/col', row, col);
+            displayInformation(`Invalid row/col ${row} ${col}`)
             return;
         }
         const cellObj = gameboard.getCell(row, col);
         if (!cellObj) {
-            console.error(`No cell at (${row},${col})`);
+            displayInformation(`No cell at (${row},${col})`)
             return;
         }
         const cellValue = cellObj.getValue();
-        // cell.textContent = cellValue === "_" ? "" : cellValue;
         if (cellValue === "_") {
             cell.textContent = "";
         } else {
@@ -115,12 +129,12 @@ function Gameboard() {
 
         // STEP 1:
         if (x < board.length && y < board[x].length) {
-            console.log('y is correct -> STEP 2');
             const cell = board[x][y];
 
             // STEP 2:
             if (cell.isEmpty()) {
-                console.log('cell is empty, proceed');
+
+                // displayInformation('cell is empty, proceed')
 
                 cell.setValue(mark);
                 printBoard();
@@ -133,19 +147,18 @@ function Gameboard() {
                     return weHaveWinner;
 
                 } else if (status === false) {
-                    console.log('no winner yet')
+                    displayInformation('WINNER? NO, NO WINNER YET!')
                     const noWinnerYet = gameResult(true, false);
                     console.log(noWinnerYet);
                     return noWinnerYet;
                 }
 
             } else {
-                console.log('cell is NOT empty, back to STEP 0');
+                displayInformation('cell is NOT empty, CHOOSE DIFFERENT CELL!');
                 return false;
             }
 
         } else {
-            console.log('y is out of range, back to STEP 0');
             return false;
         }
 
@@ -216,8 +229,7 @@ function GameController(gameboard, playerOne, playerTwo) {
         if (turn === 9) {
             gameFinished = true;
             gameResult = { draw: true };
-            console.log('MESSAGE FROM OUR SPONSOR:');
-            console.log('DRAW!');
+            displayInformation('DRAW! PLAY AGAIN!')
             stats.updateStats(gameResult);
             renderBoard(gameboard);
             return true;
@@ -237,12 +249,11 @@ function GameController(gameboard, playerOne, playerTwo) {
 
         if (isNaN(r) || isNaN(c)) return false;
 
-
-        console.log(`round ${turn + 1} and ${currentPlayer.name} making his turn`);
+        displayInformation(`round ${turn + 1} and ${currentPlayer.name} making his turn`)
 
         if (!isGameActive() || currentPlayer.type !== 'human') return false;
         if (!gameboard.getCell(r, c).isEmpty()) {
-            console.log('THIS CELL IS NOT EMPTY! AGAIN!')
+            displayInformation('THIS CELL IS NOT EMPTY! TRY AGAIN!')
             return false;
         }
 
@@ -253,8 +264,8 @@ function GameController(gameboard, playerOne, playerTwo) {
         if (result.winner === true) {
             gameFinished = true;
 
-            console.log('we have winner');
-            console.log(`it's ${currentPlayer.name}!`)
+            displayInformation('WE HAVE A WINNER!');
+            displayInformation(`it's ${currentPlayer.name}!`);
             gameResult = { winner: currentPlayer.name };
             stats.updateStats(gameResult);
             return true;
@@ -266,8 +277,10 @@ function GameController(gameboard, playerOne, playerTwo) {
         renderBoard(gameboard);
 
         if (isGameActive() && currentPlayer.type === 'computer') {
-            console.log('BEFORE WE MOVE ON');
-            console.log('PLEASE READ THE MESSAGE FROM OUR SPONSOR');
+
+            displayInformation('BEFORE WE MOVE ON');
+            displayInformation('PLEASE READ THE MESSAGE FROM OUR SPONSOR');
+
             setTimeout(() => {
                 computerTurn(gameboard);
             }, 500);
@@ -280,13 +293,18 @@ function GameController(gameboard, playerOne, playerTwo) {
 
         const bestCompMove = findBestMove('O');
         if (bestCompMove) {
-            console.log('THE COMPUTER FOUND HIS THE BEST MOVE! HE IS READY TO USE IT! AND...')
+
+            displayInformation('THE COMPUTOR FOUND HIS THE BEST MOVE! HE IS READY TO USE IT! AND...');
+
             return bestCompMove;
         }
 
         const blockHumanMove = findBestMove('X');
         if (blockHumanMove) {
-            console.log('THE COMPUTER FOUND YOUR BEST MOVE! HE IS GONNA BLOCK IT ANY MOMENT! AND...');
+
+            displayInformation('HAHA! THE COMPUTER FOUND YOUR BEST MOVE!');
+            displayInformation('HE IS GONNA BLOCK IT ANY MOMENT! AND...');
+
             return blockHumanMove;
         }
 
@@ -307,14 +325,16 @@ function GameController(gameboard, playerOne, playerTwo) {
             return;
         }
 
-        console.log(`round ${turn + 1} and ${currentPlayer.name} making his turn`);
+        displayInformation(`round ${turn + 1} and ${currentPlayer.name} making his turn`);
         const coords = computeMove();
         const result = gameboard.addMark(coords.x, coords.y, currentPlayer.mark);
 
         if (result.winner === true) {
             gameFinished = true;
-            console.log('we have winner');
-            console.log(`it's ${currentPlayer.name}!`)
+            displayInformation(`WE HAVE A WINNER!!!`);
+            displayInformation(`YOU KNOW HIM! YOU LOVE HIM!`);
+            displayInformation(`IT'S ${currentPlayer.name}!`);
+            displayInformation(`'crowd noises'`);
             gameResult = { winner: currentPlayer.name, };
             stats.updateStats(gameResult);
             renderBoard(gameboard);
@@ -358,6 +378,7 @@ function GameController(gameboard, playerOne, playerTwo) {
         currentPlayer = playerOne;
         turn = 0;
         gameResult = '';
+        messageBoard.innerHTML = "";
         gameFinished = false;
     }
 

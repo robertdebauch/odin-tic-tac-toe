@@ -29,6 +29,10 @@ body {
 
 
 /* header */
+#controls {
+    min-height: 4rem;
+}
+
 header {
     width: 100%;
     display: flex;
@@ -36,6 +40,7 @@ header {
     justify-content: center;
     height: 220px;
     gap: 2rem;
+    overflow-y: visible;
 }
 
 header .gamename {
@@ -82,8 +87,49 @@ header button {
     color: var(--primary-color);
 }
 
+#pve, #pvp {
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+#pve.active, #pvp.active {
+    transform: translateY(64px);
+}
+
+#pve.disabled, #pvp.disabled {
+    opacity: .2;
+    filter: grayscale(1000%);
+    pointer-events: none;
+}
+
+
+
 header button svg {
     width: 4rem;
+}
+
+/* start and restart buttons */
+
+#start, #restart {
+    border: none;
+    font-size: 2rem;
+    font-weight: 800;
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--text-color);
+    color: var(--primary-color);
+    transition: padding 0.2s ease-in-out;
+    pointer-events: all;
+}
+
+#start:hover, #restart:hover {
+    background-color: var(--element-color);
+    color: var(--text-color);
+    padding: 0.5rem 0.5rem;
+}
+
+#restart.disabled, #start.disabled {
+    pointer-events: none;
+    display: none;
 }
 
 /* instruction */

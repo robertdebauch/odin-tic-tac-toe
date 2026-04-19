@@ -26,7 +26,6 @@
             <div class="gamename">
                 <h1>Tic Tac Toe</h1>
                 <img src="assets/decoration/tictactoelogo.svg" alt="tic tac toe game logo">
-                <!-- <button id="restart">AGAIN</button> IN DOM -->
             </div>
             <button class="gamemode" id="pve">PVE
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -36,8 +35,10 @@
                 </svg>
             </button>
         </header>
-        <button id="start">start game</button>
-        <button id="restart">new game</button>
+        <div id="controls">
+        <button id="start" class="disabled">start game</button>
+        <button id="restart" class="disabled">new game</button>
+        </div>
         <section class="instruction">
             <div class="step">
                 <span>choose mode</span>

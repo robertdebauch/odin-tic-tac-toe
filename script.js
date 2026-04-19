@@ -1,11 +1,31 @@
 const gameboard = Gameboard();
 const playerOne = createPlayer("playerOne", "X", 'human');
+
+let currentGameController = null;
+let selectedGameMode = null;
+
 // const playerTwo = chooseGameMode();
-const playerTwo = createPlayer("playerTwo", "O", 'computer');
-const gameController = GameController(gameboard, playerOne, playerTwo);
+// const playerTwo = createPlayer("playerTwo", "O", 'computer');
+// const gameController = GameController(gameboard, playerOne, playerTwo);
 
 const messageBoard = document.querySelector('.gamelog-info');
+const startButton = document.querySelector('#start');
+const pvpModeButton = document.querySelector('#pvp');
+const pveModeButton = document.querySelector('#pve');
 
+pvpModeButton.addEventListener('click', () => {
+    pvpModeButton.classList.add('active');
+    selectedGameMode = 'pvp';
+    startButton.classList.remove('disabled');
+    // and also choose this mode
+});
+
+pveModeButton.addEventListener('click', () => {
+    pveModeButton.classList.add('active');
+    selectedGameMode = 'pve';
+    startButton.classList.remove('disabled');
+    // and also choose this mode
+});
 
 
 function displayInformation(text) {
@@ -18,6 +38,45 @@ function displayInformation(text) {
         messageBoard.scrollTop = messageBoard.scrollHeight;
     }, 10);
 }
+
+function clearInformation() {
+    messageBoard.innerHTML = "";
+}
+
+function startGamePreparation() {
+
+    pvpModeButton.classList.remove('active');
+    pveModeButton.classList.remove('active');
+    pvpModeButton.classList.add('disabled');
+    pveModeButton.classList.add('disabled');
+    startButton.classList.add('disabled');
+    restartButton.classList.remove('disabled');
+}
+
+startButton.addEventListener('click', () => {
+    let playerOne;
+    let playerTwo;
+
+    if (selectedGameMode === 'pvp') {
+        playerOne = createPlayer("playerOne", "X", "human");
+        playerTwo = createPlayer("playerTwo", "O", "human");
+        startGamePreparation();
+
+    } else if (selectedGameMode === 'pve') {
+        playerOne = createPlayer("playerOne", "X", "human");
+        playerTwo = createPlayer("playerTwo", "O", "computer");
+        startGamePreparation();
+    }
+
+    currentGameController = GameController(gameboard, playerOne, playerTwo);
+
+    currentGameController.startGame(selectedGameMode === 'pvp' ? 'PvP' : 'PvE');
+
+});
+
+const restartButton = document.querySelector('#restart');
+restartButton.addEventListener('click', fullReset);
+
 
 function Cell() {
     const EMPTY_CELL = "_";
@@ -67,12 +126,35 @@ function renderBoard(gameboard) {
     });
 }
 
+function fullReset() {
+    currentGameController = null;
+    gameboard.createBoard();
+    renderBoard(gameboard);
+    clearInformation();
+    pvpModeButton.classList.remove('disabled');
+    pveModeButton.classList.remove('disabled');
+    pvpModeButton.classList.remove('active');
+    pveModeButton.classList.remove('active');
+    restartButton.classList.add('disabled');
+    startButton.classList.add('disabled');
+    selectedGameMode = null;
+}
+
 function updateStatsUI(numberOfGames, playerOneWins, playerTwoWins, draws) {
     document.querySelector('#games_number').textContent = numberOfGames;
     document.querySelector('#one_stat').textContent = playerOneWins;
     document.querySelector('#two_stat').textContent = playerTwoWins;
     document.querySelector('#draw_stat').textContent = draws;
 }
+
+document.querySelectorAll('.cell').forEach(cell => {
+    cell.addEventListener('click', () => {
+        if (!currentGameController || !currentGameController.isGameActive()) return;
+        const row = parseInt(cell.dataset.row);
+        const col = parseInt(cell.dataset.col);
+        currentGameController.humanTurn(row, col, gameboard);
+    })
+})
 
 function Gameboard() {
     const board = [];
@@ -372,31 +454,20 @@ function GameController(gameboard, playerOne, playerTwo) {
 
     const stats = GameStatistic();
 
-    const newGame = () => {
-        gameboard.createBoard();
-        renderBoard(gameboard)
-        currentPlayer = playerOne;
-        turn = 0;
-        gameResult = '';
-        messageBoard.innerHTML = "";
+    function startGame(mode) {
         gameFinished = false;
+        turn = 0;
+        currentPlayer = playerOne;
+        gameboard.createBoard();
+        renderBoard(gameboard);
+        clearInformation();
+        displayInformation(`Game started in ${mode} mode`);
+        
     }
 
-    const restartButton = document.querySelector('#restart');
-    restartButton.addEventListener('click', newGame);
-
-
-    return { GameStatistic, humanTurn, computerTurn, isGameActive }
+    return { GameStatistic, humanTurn, computerTurn, isGameActive, startGame }
 }
 
-document.querySelectorAll('.cell').forEach(cell => {
-    cell.addEventListener('click', () => {
-        if (!gameController.isGameActive()) return;
-        const row = parseInt(cell.dataset.row);
-        const col = parseInt(cell.dataset.col);
-        gameController.humanTurn(row, col, gameboard);
-    })
-})
 
 function initializeGame(gameboard, controller) {
     gameboard.printBoard();
@@ -405,5 +476,5 @@ function initializeGame(gameboard, controller) {
 
 
 
-initializeGame(gameboard, gameController);
+// initializeGame(gameboard, currentGameController);
 

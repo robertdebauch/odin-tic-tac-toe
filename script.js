@@ -4,10 +4,6 @@ const playerOne = createPlayer("playerOne", "X", 'human');
 let currentGameController = null;
 let selectedGameMode = null;
 
-// const playerTwo = chooseGameMode();
-// const playerTwo = createPlayer("playerTwo", "O", 'computer');
-// const gameController = GameController(gameboard, playerOne, playerTwo);
-
 const messageBoard = document.querySelector('.gamelog-info');
 const startButton = document.querySelector('#start');
 const pvpModeButton = document.querySelector('#pvp');
@@ -15,18 +11,31 @@ const pveModeButton = document.querySelector('#pve');
 
 pvpModeButton.addEventListener('click', () => {
     pvpModeButton.classList.add('active');
+    pveModeButton.classList.remove('active');
     selectedGameMode = 'pvp';
     startButton.classList.remove('disabled');
-    // and also choose this mode
+    let opponent = document.querySelector('.playerTwo')
+    opponent.textContent = 'HUMANOID';
+
+    opponent.classList.remove('computor');
+    opponent.classList.add('humanoid');
+
+    highlightSteps(document.querySelector('.second-step'));
 });
 
 pveModeButton.addEventListener('click', () => {
     pveModeButton.classList.add('active');
+    pvpModeButton.classList.remove('active');
     selectedGameMode = 'pve';
     startButton.classList.remove('disabled');
-    // and also choose this mode
-});
+    let opponent = document.querySelector('.playerTwo')
+    opponent.textContent = 'COMPUTOR';
+    
+    opponent.classList.remove('humanoid');
+    opponent.classList.add('computor');
 
+    highlightSteps(document.querySelector('.second-step'));
+});
 
 function displayInformation(text) {
     let information = document.createElement('p');
@@ -43,6 +52,24 @@ function clearInformation() {
     messageBoard.innerHTML = "";
 }
 
+
+const steps = document.querySelectorAll('.step');
+
+steps.forEach((step) => {
+    step.classList.add('active');
+});
+
+function highlightSteps(currentStep) {
+    steps.forEach((step) => {
+        step.classList.remove('active');
+    });
+
+    currentStep.classList.add('active');
+}
+
+highlightSteps(document.querySelector('.first-step'));
+
+
 function startGamePreparation() {
 
     pvpModeButton.classList.remove('active');
@@ -50,7 +77,6 @@ function startGamePreparation() {
     pvpModeButton.classList.add('disabled');
     pveModeButton.classList.add('disabled');
     startButton.classList.add('disabled');
-    restartButton.classList.remove('disabled');
 }
 
 startButton.addEventListener('click', () => {
@@ -216,8 +242,6 @@ function Gameboard() {
             // STEP 2:
             if (cell.isEmpty()) {
 
-                // displayInformation('cell is empty, proceed')
-
                 cell.setValue(mark);
                 printBoard();
                 renderBoard(gameboard)
@@ -246,6 +270,8 @@ function Gameboard() {
 
     }
 
+
+
     return { printBoard, addMark, checkWin, createBoard, getWinLines, getCell }
 }
 
@@ -269,14 +295,14 @@ function chooseGameMode() {
 function GameController(gameboard, playerOne, playerTwo) {
 
     let currentPlayer = playerOne;
-    // let turnLimit = 9; 
     let turn = 0;
     let gameFinished = false;
     let gameResult;
 
-    // function getCurrentPlayerType() {
-    //     return currentPlayer.type;
-    // } <- CAN BE USEFUL LATER?
+    function endGame() {
+        highlightSteps(document.querySelector('.fourth-step'));
+        restartButton.classList.remove('disabled');
+    }
 
     function isGameActive() {
         return !gameFinished;
@@ -310,6 +336,7 @@ function GameController(gameboard, playerOne, playerTwo) {
     function checkDraw() {
         if (turn === 9) {
             gameFinished = true;
+            endGame();
             gameResult = { draw: true };
             displayInformation('DRAW! PLAY AGAIN!')
             stats.updateStats(gameResult);
@@ -345,6 +372,7 @@ function GameController(gameboard, playerOne, playerTwo) {
 
         if (result.winner === true) {
             gameFinished = true;
+            endGame();
 
             displayInformation('WE HAVE A WINNER!');
             displayInformation(`it's ${currentPlayer.name}!`);
@@ -413,6 +441,7 @@ function GameController(gameboard, playerOne, playerTwo) {
 
         if (result.winner === true) {
             gameFinished = true;
+            endGame();
             displayInformation(`WE HAVE A WINNER!!!`);
             displayInformation(`YOU KNOW HIM! YOU LOVE HIM!`);
             displayInformation(`IT'S ${currentPlayer.name}!`);
@@ -461,18 +490,20 @@ function GameController(gameboard, playerOne, playerTwo) {
         gameboard.createBoard();
         renderBoard(gameboard);
         clearInformation();
+        highlightSteps(document.querySelector('.third-step'));
         displayInformation(`Game started in ${mode} mode`);
-        
+
     }
 
     return { GameStatistic, humanTurn, computerTurn, isGameActive, startGame }
 }
 
 
-function initializeGame(gameboard, controller) {
-    gameboard.printBoard();
-    renderBoard(gameboard);
-}
+// function initializeGame(gameboard, controller) {
+//     gameboard.printBoard();
+//     renderBoard(gameboard);
+// }
+
 
 
 

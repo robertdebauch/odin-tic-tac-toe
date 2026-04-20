@@ -5,6 +5,8 @@
     --pvp-color: #5b631c;
     --element-color: #8d9387;
     --background-color: #837667;
+    --active-color: #FCCA46;
+    --final-step: #23CE6B;
 }
 
 html {
@@ -82,26 +84,28 @@ header button {
     -webkit-mask: url('assets/decoration/flag-mask.svg') no-repeat center / contain;
 }
 
-#pve:hover, #pvp:hover {
+#pve:hover,
+#pvp:hover {
     fill: var(--primary-color);
     color: var(--primary-color);
 }
 
-#pve, #pvp {
+#pve,
+#pvp {
     transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-#pve.active, #pvp.active {
+#pve.active,
+#pvp.active {
     transform: translateY(64px);
 }
 
-#pve.disabled, #pvp.disabled {
+#pve.disabled,
+#pvp.disabled {
     opacity: .2;
     filter: grayscale(1000%);
     pointer-events: none;
 }
-
-
 
 header button svg {
     width: 4rem;
@@ -109,7 +113,8 @@ header button svg {
 
 /* start and restart buttons */
 
-#start, #restart {
+#start,
+#restart {
     border: none;
     font-size: 2rem;
     font-weight: 800;
@@ -121,13 +126,15 @@ header button svg {
     pointer-events: all;
 }
 
-#start:hover, #restart:hover {
+#start:hover,
+#restart:hover {
     background-color: var(--element-color);
     color: var(--text-color);
     padding: 0.5rem 0.5rem;
 }
 
-#restart.disabled, #start.disabled {
+#restart.disabled,
+#start.disabled {
     pointer-events: none;
     display: none;
 }
@@ -139,11 +146,14 @@ section.instruction {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    background-color: var(--primary-color);
+    /* background-color: var(--primary-color); */
     border: 1px solid var(--text-color);
 }
 
 .instruction .step {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    fill: var(--text-color);
     display: flex;
     justify-content: center;
     gap: .75rem;
@@ -156,7 +166,20 @@ section.instruction {
 }
 
 .step span {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+}
+
+.step.active {
+    background-color: var(--active-color);
+    color: var(--text-color);
+    fill: var(--text-color);
+    font-style: italic;
+}
+
+.step.final {
+    color: var(--primary-color);
+    fill: var(--primary-color);
+    background-color: var(--final-step);
 }
 
 /* main */
@@ -202,7 +225,12 @@ aside .gamemode-info {
     color: var(--pvp-color);
 }
 
-.gamemode-info :last-child {
+
+.humanoid {
+    color: var(--pvp-color);
+}
+
+.computor {
     color: var(--pve-color);
 }
 

@@ -36,12 +36,21 @@
             </button>
         </header>
         <div id="controls">
-        <button id="start" class="disabled">start game</button>
-        <button id="restart" class="disabled">new game</button>
+            <button id="start" class="disabled">start game</button>
+            <button id="restart" class="disabled">new game</button>
         </div>
         <section class="instruction">
-            <div class="step">
+            <div class="step first-step">
                 <span>choose mode</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-flag-icon lucide-flag">
+                    <path
+                        d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528" />
+                </svg>
+            </div>
+            <div class="step second-step">
+                <span>start game</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="lucide lucide-swords-icon lucide-swords">
@@ -55,7 +64,7 @@
                     <line x1="3" x2="5" y1="19" y2="21" />
                 </svg>
             </div>
-            <div class="step">
+            <div class="step third-step">
                 <span>make moves</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -71,7 +80,7 @@
                     <circle cx="5" cy="19" r="1" />
                 </svg>
             </div>
-            <div class="step">
+            <div class="step fourth-step">
                 <span>see results</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -81,7 +90,7 @@
                     <path d="M5 21h14" />
                 </svg>
             </div>
-            <div class="step">
+            <div class="step fifth-step">
                 <span>play again!</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -98,12 +107,12 @@
                 <div class="gamemode-info">
                     <div class="playerOne">HUMANOID</div>
                     <div>VS</div>
-                    <div class="playerTwo">COMPUTOR</div>
+                    <div class="playerTwo">OPPONENT</div>
                 </div>
                 <div class="gamelog">
                     <div class="ui-panel">gameinfo</div>
                     <div class="gamelog-info">
-                        
+
                     </div>
                 </div>
                 <div class="gamestats">

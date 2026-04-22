@@ -4,105 +4,232 @@ const playerOne = createPlayer("playerOne", "X", 'human');
 let currentGameController = null;
 let selectedGameMode = null;
 
-const messageBoard = document.querySelector('.gamelog-info');
-const startButton = document.querySelector('#start');
-const pvpModeButton = document.querySelector('#pvp');
-const pveModeButton = document.querySelector('#pve');
+const UI = (function () {
+    const elements = {
+        cells: document.querySelectorAll('.cell'),
+        messageBoard: document.querySelector('.gamelog-info'),
+        numberOfGames: document.querySelector('#games_number'),
+        playerOneWins: document.querySelector('#one_stat'),
+        playerTwoWins: document.querySelector('#two_stat'),
+        drawStat: document.querySelector('#draw_stat'),
+        instructions: document.querySelectorAll('.step'),
+        pvpModeButton: document.querySelector('#pvp'),
+        pveModeButton: document.querySelector('#pve'),
+        startButton: document.querySelector('#start'),
+        restartButton: document.querySelector('#restart'),
+        playerOneName: document.querySelector('.playerOne'),
+        playerTwoName: document.querySelector('.playerTwo'),
+        playerOneStatName: document.querySelector('#player'),
+        playerTwoStatName: document.querySelector('#opponent'),
+    };
 
-pvpModeButton.addEventListener('click', () => {
-    pvpModeButton.classList.add('active');
-    pveModeButton.classList.remove('active');
+    function renderBoard(gameboard) {
+
+        if (!gameboard) {
+            displayInformation('renderBoard: gameboard is undefined')
+            return;
+        }
+
+        const winningLine = gameboard.getWinningLine();
+
+        elements.cells.forEach(cell => {
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+
+            if (isNaN(row) || isNaN(col)) {
+                displayInformation(`Invalid row/col ${row} ${col}`)
+                return;
+            }
+
+            const cellObj = gameboard.getCell(row, col);
+
+            if (!cellObj) {
+                displayInformation(`No cell at (${row},${col})`)
+                return;
+            }
+
+            const cellValue = cellObj.getValue();
+            const prevValue = cell.textContent;
+
+            if (cellValue === "_") {
+                cell.textContent = "";
+            } else {
+                cell.textContent = cellValue;
+            }
+
+
+            let stateDescription;
+            if (cellValue === "_") {
+                stateDescription = "EMPTY";
+            } else {
+                stateDescription = `MARKED ${cellValue}`;
+            }
+            cell.setAttribute('aria-label', `cell, row ${row + 1}, column ${col + 1}, ${stateDescription}`);
+
+
+
+            if (cellValue !== "_" && cell.textContent !== prevValue) {
+                cell.classList.add('pop');
+
+                function handleAnimationEnd() {
+                    cell.classList.remove('pop');
+                    cell.removeEventListener('animationend', handleAnimationEnd);
+                }
+
+                cell.addEventListener('animationend', handleAnimationEnd);
+            }
+
+            cell.classList.remove('winning-cell');
+
+            if (winningLine) {
+                const winAchieved = winningLine.some(([x, y]) => x === row && y === col);
+                if (winAchieved) {
+                    cell.classList.add('winning-cell');
+                }
+            }
+        });
+    }
+
+    function displayInformation(text) {
+        let infotext = document.createElement('p');
+        infotext.textContent = text;
+        infotext.classList.add('infotext');
+        elements.messageBoard.appendChild(infotext);
+
+        setTimeout(() => {
+            elements.messageBoard.scrollTop = elements.messageBoard.scrollHeight;
+        }, 10);
+    }
+
+    function clearInformation() {
+        elements.messageBoard.innerHTML = "";
+    }
+
+    function updateStatsUI(numberOfGames, playerOneWins, playerTwoWins, draws) {
+        elements.numberOfGames.textContent = numberOfGames;
+        elements.playerOneWins.textContent = playerOneWins;
+        elements.playerTwoWins.textContent = playerTwoWins;
+        elements.drawStat.textContent = draws;
+    }
+
+    function highlightStep(currentStep) {
+        elements.instructions.forEach((step) => {
+            step.classList.remove('active');
+        });
+
+        currentStep.classList.add('active');
+    }
+
+    function setModeButtonsStatus(mode) {
+
+        if (mode === 'pvp') {
+            elements.pvpModeButton.classList.add('active');
+            elements.pveModeButton.classList.remove('active');
+        } else if (mode === 'pve') {
+            elements.pveModeButton.classList.add('active');
+            elements.pvpModeButton.classList.remove('active');
+        } else {
+            elements.pvpModeButton.classList.remove('active');
+            elements.pveModeButton.classList.remove('active');
+        }
+
+    }
+
+    function setGameModeState({ startEnabled, restartEnabled }) {
+
+        if (startEnabled !== undefined) {
+            elements.startButton.classList.toggle('disabled', !startEnabled);
+        }
+
+        if (restartEnabled !== undefined) {
+            elements.restartButton.classList.toggle('disabled', !restartEnabled);
+        }
+
+    };
+
+    function updatePlayerDisplay(playerOneName, playerTwoName, mode) {
+        elements.playerOneName.textContent = playerOneName;
+        elements.playerTwoName.textContent = playerTwoName;
+
+        if (mode === 'pvp') {
+            elements.playerTwoStatName.textContent = 'Humanoid 2 Wins'; // parametrize it?
+            elements.playerTwoName.classList.remove('computor');
+            elements.playerTwoName.classList.add('humanoid');
+        } else {
+            elements.playerTwoStatName.textContent = 'Computor Wins';
+            elements.playerTwoName.classList.remove('humanoid');
+            elements.playerTwoName.classList.add('computor');
+        }
+
+    };
+
+    function getElement(key) {
+        return elements[key]; // will work?
+    }
+
+    return {
+        renderBoard, displayInformation, clearInformation, updateStatsUI, highlightStep,
+        setModeButtonsStatus, setGameModeState, updatePlayerDisplay, getElement,
+    };
+})();
+
+UI.highlightStep(document.querySelector('.first-step'));
+
+UI.getElement('pvpModeButton').addEventListener('click', () => {
+
+    UI.setModeButtonsStatus('pvp');
+    UI.updatePlayerDisplay('HUMANOID', 'HUMANOID', 'pvp');
     selectedGameMode = 'pvp';
-    startButton.classList.remove('disabled');
-    let opponent = document.querySelector('.playerTwo')
-    opponent.textContent = 'HUMANOID';
 
-    opponent.classList.remove('computor');
-    opponent.classList.add('humanoid');
-
-    highlightSteps(document.querySelector('.second-step'));
-});
-
-pveModeButton.addEventListener('click', () => {
-    pveModeButton.classList.add('active');
-    pvpModeButton.classList.remove('active');
-    selectedGameMode = 'pve';
-    startButton.classList.remove('disabled');
-    let opponent = document.querySelector('.playerTwo')
-    opponent.textContent = 'COMPUTOR';
-    
-    opponent.classList.remove('humanoid');
-    opponent.classList.add('computor');
-
-    highlightSteps(document.querySelector('.second-step'));
-});
-
-function displayInformation(text) {
-    let information = document.createElement('p');
-    information.textContent = text;
-    information.classList.add('infotext');
-    messageBoard.appendChild(information);
-
-    setTimeout(() => {
-        messageBoard.scrollTop = messageBoard.scrollHeight;
-    }, 10);
-}
-
-function clearInformation() {
-    messageBoard.innerHTML = "";
-}
-
-
-const steps = document.querySelectorAll('.step');
-
-steps.forEach((step) => {
-    step.classList.add('active');
-});
-
-function highlightSteps(currentStep) {
-    steps.forEach((step) => {
-        step.classList.remove('active');
+    UI.setGameModeState({
+        startEnabled: true,
+        restartEnabled: false
     });
 
-    currentStep.classList.add('active');
-}
+    UI.highlightStep(document.querySelector('.second-step'));
+});
 
-highlightSteps(document.querySelector('.first-step'));
+UI.getElement('pveModeButton').addEventListener('click', () => {
 
+    UI.setModeButtonsStatus('pve');
+    UI.updatePlayerDisplay('HUMANOID', 'COMPUTOR', 'pve');
+    selectedGameMode = 'pve';
 
-function startGamePreparation() {
+    UI.setGameModeState({
+        startEnabled: true,
+        restartEnabled: false
+    });
 
-    pvpModeButton.classList.remove('active');
-    pveModeButton.classList.remove('active');
-    pvpModeButton.classList.add('disabled');
-    pveModeButton.classList.add('disabled');
-    startButton.classList.add('disabled');
-}
+    UI.highlightStep(document.querySelector('.second-step'));
+});
 
-startButton.addEventListener('click', () => {
+UI.getElement('startButton').addEventListener('click', () => {
     let playerOne;
     let playerTwo;
 
     if (selectedGameMode === 'pvp') {
-        playerOne = createPlayer("playerOne", "X", "human");
-        playerTwo = createPlayer("playerTwo", "O", "human");
-        startGamePreparation();
+        playerOne = createPlayer("Humanoid 1", "X", "human");
+        playerTwo = createPlayer("Humanoid 2", "O", "human");
 
     } else if (selectedGameMode === 'pve') {
-        playerOne = createPlayer("playerOne", "X", "human");
-        playerTwo = createPlayer("playerTwo", "O", "computer");
-        startGamePreparation();
+        playerOne = createPlayer("Humanoid", "X", "human");
+        playerTwo = createPlayer("Computor", "O", "computer");
+    } else {
+        return;
     }
 
-    currentGameController = GameController(gameboard, playerOne, playerTwo);
+    UI.setGameModeState({ startEnabled: false });
+    UI.setModeButtonsStatus(null);
+    UI.getElement('pvpModeButton').classList.add('disabled');
+    UI.getElement('pveModeButton').classList.add('disabled');
 
-    currentGameController.startGame(selectedGameMode === 'pvp' ? 'PvP' : 'PvE');
+    currentGameController = GameController(gameboard, playerOne, playerTwo);
+    // currentGameController.startGame(selectedGameMode === 'pvp' ? 'PvP' : 'PvE');
+    currentGameController.startGame(selectedGameMode);
 
 });
 
-const restartButton = document.querySelector('#restart');
-restartButton.addEventListener('click', fullReset);
-
+UI.getElement('restartButton').addEventListener('click', fullReset);
 
 function Cell() {
     const EMPTY_CELL = "_";
@@ -125,52 +252,20 @@ function Cell() {
     return { setValue, getValue, isEmpty }
 }
 
-function renderBoard(gameboard) {
-    if (!gameboard) {
-        displayInformation('renderBoard: gameboard is undefined')
-        return;
-    }
-    const cells = document.querySelectorAll('.cell');
-    cells.forEach(cell => {
-        const row = parseInt(cell.dataset.row);
-        const col = parseInt(cell.dataset.col);
-        if (isNaN(row) || isNaN(col)) {
-            displayInformation(`Invalid row/col ${row} ${col}`)
-            return;
-        }
-        const cellObj = gameboard.getCell(row, col);
-        if (!cellObj) {
-            displayInformation(`No cell at (${row},${col})`)
-            return;
-        }
-        const cellValue = cellObj.getValue();
-        if (cellValue === "_") {
-            cell.textContent = "";
-        } else {
-            cell.textContent = cellValue;
-        }
-    });
-}
-
 function fullReset() {
     currentGameController = null;
     gameboard.createBoard();
-    renderBoard(gameboard);
-    clearInformation();
-    pvpModeButton.classList.remove('disabled');
-    pveModeButton.classList.remove('disabled');
-    pvpModeButton.classList.remove('active');
-    pveModeButton.classList.remove('active');
-    restartButton.classList.add('disabled');
-    startButton.classList.add('disabled');
-    selectedGameMode = null;
-}
+    UI.renderBoard(gameboard);
+    UI.clearInformation();
+    UI.getElement('pvpModeButton').classList.remove('disabled');
+    UI.getElement('pveModeButton').classList.remove('disabled');
+    UI.setModeButtonsStatus(null);
+    UI.setGameModeState({
+        startEnabled: false,
+        restartEnabled: false
+    });
 
-function updateStatsUI(numberOfGames, playerOneWins, playerTwoWins, draws) {
-    document.querySelector('#games_number').textContent = numberOfGames;
-    document.querySelector('#one_stat').textContent = playerOneWins;
-    document.querySelector('#two_stat').textContent = playerTwoWins;
-    document.querySelector('#draw_stat').textContent = draws;
+    selectedGameMode = null;
 }
 
 document.querySelectorAll('.cell').forEach(cell => {
@@ -187,6 +282,18 @@ function Gameboard() {
     const rows = 3;
     const columns = 3;
 
+    let winningLine = null;
+
+    const setWinningLine = (line) => {
+        winningLine = line;
+    };
+
+    const getWinningLine = () => winningLine;
+
+    const clearWinningLine = () => {
+        winningLine = null;
+    };
+
     const createBoard = () => {
         for (let i = 0; i < rows; i++) {
             board[i] = [];
@@ -195,6 +302,7 @@ function Gameboard() {
                 board[i].push(Cell());
             }
         }
+        clearWinningLine();
     }
 
     createBoard();
@@ -225,7 +333,17 @@ function Gameboard() {
     }
 
     function checkWin(mark) {
-        return winLines.some(line => line.every(([x, y]) => board[x][y].getValue() === mark));
+
+        const winningLine = winLines.find(line =>
+            line.every(([x, y]) => board[x][y].getValue() === mark)
+        );
+
+        if (winningLine) {
+            return winningLine;
+        } else {
+            return null;
+        }
+
     }
 
     function gameResult(success, winner) {
@@ -244,23 +362,24 @@ function Gameboard() {
 
                 cell.setValue(mark);
                 printBoard();
-                renderBoard(gameboard)
+                UI.renderBoard(gameboard)
                 const status = checkWin(mark);
 
-                if (status === true) {
+                if (Array.isArray(status)) {
+                    setWinningLine(status);
                     const weHaveWinner = gameResult(true, true);
                     console.log(weHaveWinner);
                     return weHaveWinner;
 
-                } else if (status === false) {
-                    displayInformation('WINNER? NO, NO WINNER YET!')
+                } else {
+                    UI.displayInformation('WINNER? NO, NO WINNER YET!')
                     const noWinnerYet = gameResult(true, false);
                     console.log(noWinnerYet);
                     return noWinnerYet;
                 }
 
             } else {
-                displayInformation('cell is NOT empty, CHOOSE DIFFERENT CELL!');
+                UI.displayInformation('cell is NOT empty, CHOOSE DIFFERENT CELL!');
                 return false;
             }
 
@@ -272,7 +391,7 @@ function Gameboard() {
 
 
 
-    return { printBoard, addMark, checkWin, createBoard, getWinLines, getCell }
+    return { printBoard, addMark, checkWin, createBoard, getWinLines, getCell, setWinningLine, getWinningLine, clearWinningLine }
 }
 
 
@@ -300,8 +419,8 @@ function GameController(gameboard, playerOne, playerTwo) {
     let gameResult;
 
     function endGame() {
-        highlightSteps(document.querySelector('.fourth-step'));
-        restartButton.classList.remove('disabled');
+        UI.highlightStep(document.querySelector('.fourth-step'));
+        UI.setGameModeState({ restartEnabled: true });
     }
 
     function isGameActive() {
@@ -338,9 +457,9 @@ function GameController(gameboard, playerOne, playerTwo) {
             gameFinished = true;
             endGame();
             gameResult = { draw: true };
-            displayInformation('DRAW! PLAY AGAIN!')
+            UI.displayInformation('DRAW! PLAY AGAIN!')
             stats.updateStats(gameResult);
-            renderBoard(gameboard);
+            UI.renderBoard(gameboard);
             return true;
         } else {
             return false;
@@ -358,11 +477,11 @@ function GameController(gameboard, playerOne, playerTwo) {
 
         if (isNaN(r) || isNaN(c)) return false;
 
-        displayInformation(`round ${turn + 1} and ${currentPlayer.name} making his turn`)
+        UI.displayInformation(`round ${turn + 1} and ${currentPlayer.name} making his turn`)
 
         if (!isGameActive() || currentPlayer.type !== 'human') return false;
         if (!gameboard.getCell(r, c).isEmpty()) {
-            displayInformation('THIS CELL IS NOT EMPTY! TRY AGAIN!')
+            UI.displayInformation('THIS CELL IS NOT EMPTY! TRY AGAIN!')
             return false;
         }
 
@@ -374,22 +493,23 @@ function GameController(gameboard, playerOne, playerTwo) {
             gameFinished = true;
             endGame();
 
-            displayInformation('WE HAVE A WINNER!');
-            displayInformation(`it's ${currentPlayer.name}!`);
+            UI.displayInformation('WE HAVE A WINNER!');
+            UI.displayInformation(`it's ${currentPlayer.name}!`);
             gameResult = { winner: currentPlayer.name };
             stats.updateStats(gameResult);
+            UI.renderBoard(gameboard);
             return true;
         }
 
         switchPlayer();
         checkDraw();
 
-        renderBoard(gameboard);
+        UI.renderBoard(gameboard);
 
         if (isGameActive() && currentPlayer.type === 'computer') {
 
-            displayInformation('BEFORE WE MOVE ON');
-            displayInformation('PLEASE READ THE MESSAGE FROM OUR SPONSOR');
+            UI.displayInformation('BEFORE WE MOVE ON');
+            UI.displayInformation('PLEASE READ THE MESSAGE FROM OUR SPONSOR');
 
             setTimeout(() => {
                 computerTurn(gameboard);
@@ -399,35 +519,72 @@ function GameController(gameboard, playerOne, playerTwo) {
         return true;
     }
 
-    function computeMove() {
+    function computerMove() {
+        const winMove = findBestMove('O');
 
-        const bestCompMove = findBestMove('O');
-        if (bestCompMove) {
-
-            displayInformation('THE COMPUTOR FOUND HIS THE BEST MOVE! HE IS READY TO USE IT! AND...');
-
-            return bestCompMove;
+        if (winMove) {
+            UI.displayInformation('THE COMPUTOR HAS FOUND A WAY TO WIN!');
+            UI.displayInformation('AND...');
+            return winMove;
         }
 
         const blockHumanMove = findBestMove('X');
         if (blockHumanMove) {
-
-            displayInformation('HAHA! THE COMPUTER FOUND YOUR BEST MOVE!');
-            displayInformation('HE IS GONNA BLOCK IT ANY MOMENT! AND...');
-
+            UI.displayInformation('HAHA! THE COMPUTER FOUND YOUR BEST MOVE!');
+            UI.displayInformation('HE IS GONNA BLOCK IT ANY MOMENT! AND...');
             return blockHumanMove;
         }
 
-        let x;
-        let y;
-        let threshold = 3;
+        return getUltraMove();
+    }
 
-        do {
-            x = Math.floor(Math.random() * threshold);
-            y = Math.floor(Math.random() * threshold);
-        } while (!gameboard.getCell(x, y).isEmpty());
+    function getUltraMove() {
+        const center = { x: 1, y: 1 };
+        if (gameboard.getCell(1, 1).isEmpty()) {
+            return center;
+        }
 
-        return { x, y };
+        const corners = [
+            { x: 0, y: 0 },
+            { x: 0, y: 2 },
+            { x: 2, y: 0 },
+            { x: 2, y: 2 }
+        ];
+
+        const humanCorners = corners.filter(corner => gameboard.getCell(corner.x, corner.y).getValue() === 'X');
+
+        if (humanCorners.length === 2) {
+            const emptyCorner = corners.find(corner => gameboard.getCell(corner.x, corner.y).isEmpty());
+
+            if (emptyCorner) {
+                return emptyCorner;
+            }
+        }
+
+        const randomizedCorners = [...corners].sort(() => Math.random() - 0.5);
+
+        for (let corner of randomizedCorners) {
+            if (gameboard.getCell(corner.x, corner.y).isEmpty()) {
+                return corner;
+            }
+        }
+
+        const edges = [
+            { x: 0, y: 1 },
+            { x: 1, y: 0 },
+            { x: 1, y: 2 },
+            { x: 2, y: 1 }
+        ];
+
+        const randomizedEdges = [...edges].sort(() => Math.random() - 0.5);
+
+        for (let edge of randomizedEdges) {
+            if (gameboard.getCell(edge.x, edge.y).isEmpty()) {
+                return edge;
+            }
+        }
+
+        return null;
     }
 
     function computerTurn() {
@@ -435,27 +592,27 @@ function GameController(gameboard, playerOne, playerTwo) {
             return;
         }
 
-        displayInformation(`round ${turn + 1} and ${currentPlayer.name} making his turn`);
-        const coords = computeMove();
+        UI.displayInformation(`round ${turn + 1} and ${currentPlayer.name} making his turn`);
+        const coords = computerMove();
         const result = gameboard.addMark(coords.x, coords.y, currentPlayer.mark);
 
         if (result.winner === true) {
             gameFinished = true;
             endGame();
-            displayInformation(`WE HAVE A WINNER!!!`);
-            displayInformation(`YOU KNOW HIM! YOU LOVE HIM!`);
-            displayInformation(`IT'S ${currentPlayer.name}!`);
-            displayInformation(`'crowd noises'`);
+            UI.displayInformation(`WE HAVE A WINNER!!!`);
+            UI.displayInformation(`YOU KNOW HIM! YOU LOVE HIM!`);
+            UI.displayInformation(`IT'S ${currentPlayer.name}!`);
+            UI.displayInformation(`'crowd noises'`);
             gameResult = { winner: currentPlayer.name, };
             stats.updateStats(gameResult);
-            renderBoard(gameboard);
+            UI.renderBoard(gameboard);
             return;
         }
 
         switchPlayer();
         checkDraw();
 
-        renderBoard(gameboard);
+        UI.renderBoard(gameboard);
     }
 
     const GameStatistic = () => {
@@ -475,7 +632,7 @@ function GameController(gameboard, playerOne, playerTwo) {
                 draws++;
             }
             numberOfGames++;
-            updateStatsUI(numberOfGames, playerOneWins, playerTwoWins, draws);
+            UI.updateStatsUI(numberOfGames, playerOneWins, playerTwoWins, draws);
         }
 
         return { updateStats }
@@ -488,24 +645,14 @@ function GameController(gameboard, playerOne, playerTwo) {
         turn = 0;
         currentPlayer = playerOne;
         gameboard.createBoard();
-        renderBoard(gameboard);
-        clearInformation();
-        highlightSteps(document.querySelector('.third-step'));
-        displayInformation(`Game started in ${mode} mode`);
+        UI.renderBoard(gameboard);
+        UI.clearInformation();
+        UI.highlightStep(document.querySelector('.third-step'));
+        UI.displayInformation(`Game started in ${mode} mode`);
 
     }
 
     return { GameStatistic, humanTurn, computerTurn, isGameActive, startGame }
 }
 
-
-// function initializeGame(gameboard, controller) {
-//     gameboard.printBoard();
-//     renderBoard(gameboard);
-// }
-
-
-
-
-// initializeGame(gameboard, currentGameController);
 

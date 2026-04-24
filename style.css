@@ -1,5 +1,5 @@
 :root {
-    --primary-color: #ffffff;
+    --primary-color: #f6f5f4;
     --text-color: #131313;
     --pve-color: #ff0b00;
     --pvp-color: #5b631c;
@@ -7,6 +7,7 @@
     --background-color: #837667;
     --active-color: #FCCA46;
     --final-step: #23CE6B;
+    --shadow-color: #0b0a09;
 }
 
 html {
@@ -31,57 +32,68 @@ body {
 
 
 /* header */
-#controls {
-    min-height: 4rem;
-}
 
 header {
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
-    height: 220px;
     gap: 2rem;
     overflow-y: visible;
 }
 
-header .gamename {
-    height: 92px;
+header .top-menu {
+    margin-top: 2rem;
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+}
+
+header .branding {
+    line-height: 115%;
     align-self: center;
     display: flex;
     background-color: var(--primary-color);
     border: 1px solid var(--text-color);
-    padding: 0.5rem 3.5rem;
-    gap: 1rem;
+    padding: 0.5rem 2rem;
+    gap: 2rem;
     justify-content: center;
     align-items: center;
+    border-radius: .75rem;
+    box-shadow: 0 4px 0px var(--shadow-color);
 }
 
-.gamename h1 {
+.branding h1 {
+    color: var(--background-color);
     font-size: 4rem;
-    font-weight: 300;
+    font-weight: 600;
 }
 
-header button {
-    border: none;
-    width: 156px;
-    font-size: 3.25rem;
+.top-menu button {
+    line-height: 115%;
+    padding: .5rem 2rem;
+    font-size: 4rem;
     font-weight: 600;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    gap: 1.5rem;
+    border: none;
+    border-radius: .75rem;
+    box-shadow: 0 4px 0px var(--shadow-color);
+}
+
+header button svg {
+    width: 3rem;
+    height: 3rem;
 }
 
 #pve {
     background-color: var(--pve-color);
-    mask: url('assets/decoration/flag-mask.svg') no-repeat center / contain;
-    -webkit-mask: url('assets/decoration/flag-mask.svg') no-repeat center / contain;
 }
 
 #pvp {
     background-color: var(--pvp-color);
-    mask: url('assets/decoration/flag-mask.svg') no-repeat center / contain;
-    -webkit-mask: url('assets/decoration/flag-mask.svg') no-repeat center / contain;
 }
 
 #pve:hover,
@@ -107,34 +119,42 @@ header button {
     pointer-events: none;
 }
 
-header button svg {
-    width: 4rem;
-}
-
 /* start and restart buttons */
 
+.buttons-container {
+    margin: 0 auto;
+    display: flex;
+    gap: 2rem;
+    min-height: 4rem;
+}
+
 #start,
-#restart {
-    border: none;
+#restart,
+#next {
+    line-height: 100%;
+    border: 2px solid var(--text-color);
     font-size: 2rem;
-    font-weight: 800;
+    font-weight: 400;
     border-radius: 0.25rem;
     padding: 0.5rem 1rem;
-    background-color: var(--text-color);
-    color: var(--primary-color);
+    background-color: var(--primary-color);;
+    color: var(--text-color);
     transition: padding 0.2s ease-in-out;
     pointer-events: all;
+    box-shadow: 0 2px 0px var(--shadow-color);
 }
 
 #start:hover,
-#restart:hover {
+#restart:hover,
+#next:hover {
     background-color: var(--element-color);
     color: var(--text-color);
     padding: 0.5rem 0.5rem;
 }
 
 #restart.disabled,
-#start.disabled {
+#start.disabled,
+#next.disabled {
     pointer-events: none;
     display: none;
 }
@@ -207,30 +227,81 @@ aside {
 }
 
 aside .gamemode-info {
+
+    position: relative;
     background-color: var(--primary-color);
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
+
+.input-container {
+    position: relative;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 .5rem;
+}
+
+.player-input {
+    position: relative;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    font-style: inherit;
+    text-align: center;
+    outline: none;
+    transition: border-bottom 0.2s ease-in;
+    border-bottom: 2px solid transparent;
+    width: 140px;
+}
+
+.player-input:enabled {
+    background-color: transparent;
+    transition: background-color 0.2s;
+}
+
+.player-input:enabled:hover {
+    background-color: #fccb4633;
+}
+
+.player-input:disabled {
+    opacity: 0.8;
+    cursor: default;
+}
+
+.player-input:focus {
+    border-bottom: 2px solid var(--text-color);
+    background: var(--active-color);
+}
+
+.player-input.humanoid {
+    color: var(--pvp-color);
+}
+
+.player-input.computor {
+    color: var(--pve-color);
+}
+
+.player-input:disabled ~ .edit-icon {
+    display: none;
+}
+
+.vs-text {
+    font-size: 1.5rem;
+    font-weight: 500;
+    font-style: normal;
+}
+
 
 .gamemode-info> :first-child,
 .gamemode-info> :last-child {
     font-weight: 700;
     font-style: italic;
-}
-
-.gamemode-info :first-child {
-    color: var(--pvp-color);
-}
-
-
-.humanoid {
-    color: var(--pvp-color);
-}
-
-.computor {
-    color: var(--pve-color);
 }
 
 .gamelog {

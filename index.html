@@ -16,29 +16,45 @@
 <body>
     <div class="wrapper">
         <header>
-            <button class="gamemode" id="pvp">PVP
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <title>karate</title>
-                    <path
-                        d="M19.8 2L11.6 8.7L10.39 7.66L14 5.58L9.41 1L8 2.41L10.74 5.15L5 8.46L3.81 12.75L6.27 17L8 16L5.97 12.5L6.32 11.18L9.5 13L10 22H12L12.5 12L21 3.4L19.8 2M5 3C6.11 3 7 3.9 7 5S6.11 7 5 7 3 6.11 3 5 3.9 3 5 3Z" />
-                </svg>
-            </button>
-            <div class="gamename">
-                <h1>Tic Tac Toe</h1>
-                <img src="assets/decoration/tictactoelogo.svg" alt="tic tac toe game logo">
+            <div class="top-menu">
+                <button class="gamemode" id="pvp">PvP
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <title>karate</title>
+                        <path
+                            d="M19.8 2L11.6 8.7L10.39 7.66L14 5.58L9.41 1L8 2.41L10.74 5.15L5 8.46L3.81 12.75L6.27 17L8 16L5.97 12.5L6.32 11.18L9.5 13L10 22H12L12.5 12L21 3.4L19.8 2M5 3C6.11 3 7 3.9 7 5S6.11 7 5 7 3 6.11 3 5 3.9 3 5 3Z" />
+                    </svg>
+                </button>
+                <div class="branding">
+                    <h1>Tic Tac Toe</h1>
+                    <svg width="76" height="76" viewBox="0 0 76 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 36.9941H75M36.9941 75L36.9941 1" stroke="#837667" stroke-width="2"
+                            stroke-linecap="round" />
+                        <path d="M67 9L47 29M47 9L67 29" stroke="#837667" stroke-width="4" stroke-linecap="round" />
+                        <path d="M29 47L9 67M9 47L29 67" stroke="#837667" stroke-width="4" stroke-linecap="round" />
+                        <path
+                            d="M57 67C62.5228 67 67 62.5228 67 57C67 51.4772 62.5228 47 57 47C51.4772 47 47 51.4772 47 57C47 62.5228 51.4772 67 57 67Z"
+                            stroke="#837667" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M19 29C24.5228 29 29 24.5228 29 19C29 13.4772 24.5228 9 19 9C13.4772 9 9 13.4772 9 19C9 24.5228 13.4772 29 19 29Z"
+                            stroke="#837667" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <button class="gamemode" id="pve">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <title>robot-angry</title>
+                        <path
+                            d="M22 14H21C21 10.13 17.87 7 14 7H13V5.73C13.6 5.39 14 4.74 14 4C14 2.9 13.11 2 12 2S10 2.9 10 4C10 4.74 10.4 5.39 11 5.73V7H10C6.13 7 3 10.13 3 14H2C1.45 14 1 14.45 1 15V18C1 18.55 1.45 19 2 19H3V20C3 21.11 3.9 22 5 22H19C20.11 22 21 21.11 21 20V19H22C22.55 19 23 18.55 23 18V15C23 14.45 22.55 14 22 14M7.5 18C6.12 18 5 16.88 5 15.5C5 14.68 5.4 13.96 6 13.5L9.83 16.38C9.5 17.32 8.57 18 7.5 18M16.5 18C15.43 18 14.5 17.32 14.17 16.38L18 13.5C18.6 13.96 19 14.68 19 15.5C19 16.88 17.88 18 16.5 18Z" />
+                    </svg>
+                    PvE
+                </button>
             </div>
-            <button class="gamemode" id="pve">PVE
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <title>robot-angry</title>
-                    <path
-                        d="M22 14H21C21 10.13 17.87 7 14 7H13V5.73C13.6 5.39 14 4.74 14 4C14 2.9 13.11 2 12 2S10 2.9 10 4C10 4.74 10.4 5.39 11 5.73V7H10C6.13 7 3 10.13 3 14H2C1.45 14 1 14.45 1 15V18C1 18.55 1.45 19 2 19H3V20C3 21.11 3.9 22 5 22H19C20.11 22 21 21.11 21 20V19H22C22.55 19 23 18.55 23 18V15C23 14.45 22.55 14 22 14M7.5 18C6.12 18 5 16.88 5 15.5C5 14.68 5.4 13.96 6 13.5L9.83 16.38C9.5 17.32 8.57 18 7.5 18M16.5 18C15.43 18 14.5 17.32 14.17 16.38L18 13.5C18.6 13.96 19 14.68 19 15.5C19 16.88 17.88 18 16.5 18Z" />
-                </svg>
-            </button>
+            <div class="buttons-container">
+                <button id="start" class="disabled">start game</button>
+                <button id="next" class="disabled">next round</button>
+                <button id="restart" class="disabled">new game</button>
+            </div>
         </header>
-        <div id="controls">
-            <button id="start" class="disabled">start game</button>
-            <button id="restart" class="disabled">new game</button>
-        </div>
+
         <section class="instruction">
             <div class="step first-step">
                 <span>choose mode</span>
@@ -105,9 +121,35 @@
         <main>
             <aside>
                 <div class="gamemode-info">
-                    <div class="playerOne">HUMANOID</div>
-                    <div>VS</div>
-                    <div class="playerTwo">OPPONENT</div>
+                    <div class="input-container">
+                        <span class="edit-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-pencil-icon lucide-pencil">
+                                <path
+                                    d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                                <path d="m15 5 4 4" />
+                            </svg>
+                        </span>
+                        <input type="text" value="HUMANOID" id="playerOneNameInput" name="playerOneNameInput"
+                            class="player-input humanoid" maxlength="20" spellcheck="false" disabled>
+
+                    </div>
+                    <div class="vs-text">VS</div>
+                    <div class="input-container">
+                        <span class="edit-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil">
+                                <path
+                                    d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                                <path d="m15 5 4 4" />
+                            </svg>
+                        </span>
+                        <input type="text" value="OPPONENT" id="playerTwoNameInput" name="playerTwoNameInput"
+                            class="player-input" maxlength="20" spellcheck="false" disabled>
+
+                    </div>
                 </div>
                 <div class="gamelog">
                     <div class="ui-panel">gameinfo</div>
@@ -121,11 +163,11 @@
                         <div id="games_number" class="row-value">0</div>
                     </div>
                     <div class="table-row">
-                        <div id="player" class="row-name">Humanoid 1 Wins</div>
+                        <div id="playerOne_stat" class="row-name">Humanoid 1 Wins</div>
                         <div id="one_stat" class="row-value">0</div>
                     </div>
                     <div class="table-row">
-                        <div id="opponent" class="row-name">Opponent Wins</div>
+                        <div id="playerTwo_stat" class="row-name">Opponent Wins</div>
                         <div id="two_stat" class="row-value">0</div>
                     </div>
                     <div class="table-row">

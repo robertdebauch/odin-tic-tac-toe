@@ -1,3 +1,6 @@
+// i should also create separate button for continue the game in current settings
+// because there is no point in statistic if i reset it each time?
+
 const gameboard = Gameboard();
 const playerOne = createPlayer("playerOne", "X", 'human');
 
@@ -17,11 +20,61 @@ const UI = (function () {
         pveModeButton: document.querySelector('#pve'),
         startButton: document.querySelector('#start'),
         restartButton: document.querySelector('#restart'),
-        playerOneName: document.querySelector('.playerOne'),
-        playerTwoName: document.querySelector('.playerTwo'),
-        playerOneStatName: document.querySelector('#player'),
-        playerTwoStatName: document.querySelector('#opponent'),
+        nextButton: document.querySelector('#next'),
+        playerOneNameInput: document.querySelector('#playerOneNameInput'),
+        playerTwoNameInput: document.querySelector('#playerTwoNameInput'),
+        playerOneStatLabel: document.querySelector('#playerOne_stat'),
+        playerTwoStatLabel: document.querySelector('#playerTwo_stat'),
     };
+
+    function setPlayersInputs(mode) {
+        const playerOne = elements.playerOneNameInput;
+        const playerTwo = elements.playerTwoNameInput;
+
+        if (mode === 'pvp') {
+            playerOne.disabled = false;
+            playerTwo.disabled = false;
+            playerOne.value = 'HUMANOID 1';
+            playerTwo.value = 'HUMANOID 2';
+            playerTwo.classList.remove('computor');
+            playerTwo.classList.add('humanoid');
+            elements.playerOneStatLabel.textContent = 'Humanoid 1 Wins';
+            elements.playerTwoStatLabel.textContent = 'Humanoid 2 Wins';
+        } else if (mode === 'pve') {
+            playerOne.disabled = false;
+            playerTwo.disabled = true;
+            playerOne.value = 'HUMANOID';
+            playerTwo.value = 'COMPUTOR';
+            playerTwo.classList.remove('humanoid');
+            playerTwo.classList.add('computor');
+            elements.playerOneStatLabel.textContent = 'Humanoid Wins';
+            elements.playerTwoStatLabel.textContent = 'Computor Wins';
+
+        }
+    }
+
+    function enablePlayerInputs(enabled) {
+        elements.playerOneNameInput.disabled = !enabled;
+        elements.playerTwoNameInput.disabled = !enabled;
+    }
+
+    function getPlayerNames() {
+        return {
+            playerOne: elements.playerOneNameInput.value.trim() || 'Humanoid 1',
+            playerTwo: elements.playerTwoNameInput.value.trim() || (elements.playerTwoNameInput.disabled ? 'Computor' : 'Humanoid 2'),
+        };
+    }
+
+    function resetPlayersInfo() {
+        elements.playerOneNameInput.value = 'HUMANOID';
+        elements.playerTwoNameInput.value = 'OPPONENT';
+        elements.playerOneNameInput.disabled = true;
+        elements.playerTwoNameInput.disabled = true;
+        elements.playerTwoNameInput.classList.remove('computor', 'humanoid');
+        elements.playerTwoNameInput.classList.add('humanoid');
+        elements.playerOneStatLabel.textContent = 'Humanoid 1 Wins';
+        elements.playerTwoStatLabel.textContent = 'Opponent Wins';
+    }
 
     function renderBoard(gameboard) {
 
@@ -135,31 +188,20 @@ const UI = (function () {
 
     }
 
-    function setGameModeState({ startEnabled, restartEnabled }) {
+    function setGameModeState({ startEnabled, continueEnabled, restartEnabled, }) {
 
         if (startEnabled !== undefined) {
             elements.startButton.classList.toggle('disabled', !startEnabled);
         }
 
+        if (continueEnabled !== undefined) {
+            elements.nextButton.classList.toggle('disabled', !continueEnabled);
+        }
+
         if (restartEnabled !== undefined) {
             elements.restartButton.classList.toggle('disabled', !restartEnabled);
         }
-
-    };
-
-    function updatePlayerDisplay(playerOneName, playerTwoName, mode) {
-        elements.playerOneName.textContent = playerOneName;
-        elements.playerTwoName.textContent = playerTwoName;
-
-        if (mode === 'pvp') {
-            elements.playerTwoStatName.textContent = 'Humanoid 2 Wins'; // parametrize it?
-            elements.playerTwoName.classList.remove('computor');
-            elements.playerTwoName.classList.add('humanoid');
-        } else {
-            elements.playerTwoStatName.textContent = 'Computor Wins';
-            elements.playerTwoName.classList.remove('humanoid');
-            elements.playerTwoName.classList.add('computor');
-        }
+        
 
     };
 
@@ -168,8 +210,8 @@ const UI = (function () {
     }
 
     return {
-        renderBoard, displayInformation, clearInformation, updateStatsUI, highlightStep,
-        setModeButtonsStatus, setGameModeState, updatePlayerDisplay, getElement,
+        setPlayersInputs, enablePlayerInputs, getPlayerNames, resetPlayersInfo, renderBoard, displayInformation, clearInformation, updateStatsUI, 
+        highlightStep, setModeButtonsStatus, setGameModeState, getElement,
     };
 })();
 
@@ -178,7 +220,7 @@ UI.highlightStep(document.querySelector('.first-step'));
 UI.getElement('pvpModeButton').addEventListener('click', () => {
 
     UI.setModeButtonsStatus('pvp');
-    UI.updatePlayerDisplay('HUMANOID', 'HUMANOID', 'pvp');
+    UI.setPlayersInputs('pvp');
     selectedGameMode = 'pvp';
 
     UI.setGameModeState({
@@ -192,7 +234,7 @@ UI.getElement('pvpModeButton').addEventListener('click', () => {
 UI.getElement('pveModeButton').addEventListener('click', () => {
 
     UI.setModeButtonsStatus('pve');
-    UI.updatePlayerDisplay('HUMANOID', 'COMPUTOR', 'pve');
+    UI.setPlayersInputs('pve');
     selectedGameMode = 'pve';
 
     UI.setGameModeState({
@@ -204,32 +246,44 @@ UI.getElement('pveModeButton').addEventListener('click', () => {
 });
 
 UI.getElement('startButton').addEventListener('click', () => {
-    let playerOne;
-    let playerTwo;
 
-    if (selectedGameMode === 'pvp') {
-        playerOne = createPlayer("Humanoid 1", "X", "human");
-        playerTwo = createPlayer("Humanoid 2", "O", "human");
-
-    } else if (selectedGameMode === 'pve') {
-        playerOne = createPlayer("Humanoid", "X", "human");
-        playerTwo = createPlayer("Computor", "O", "computer");
-    } else {
+    if (!selectedGameMode) {
         return;
     }
 
-    UI.setGameModeState({ startEnabled: false });
+    const playerNames = UI.getPlayerNames();
+    const playerOne = createPlayer(playerNames.playerOne, "X", "human");
+
+    let playerTwo;
+
+    if (selectedGameMode === 'pvp') {
+        playerTwo = createPlayer(playerNames.playerTwo, "O", "human");
+    } else {
+        playerTwo = createPlayer(playerNames.playerTwo, "O", "computer");
+    }
+
+    UI.enablePlayerInputs(false);
+    UI.setGameModeState({ startEnabled: false, continueEnabled: false, restartEnabled: false });
     UI.setModeButtonsStatus(null);
     UI.getElement('pvpModeButton').classList.add('disabled');
     UI.getElement('pveModeButton').classList.add('disabled');
 
     currentGameController = GameController(gameboard, playerOne, playerTwo);
-    // currentGameController.startGame(selectedGameMode === 'pvp' ? 'PvP' : 'PvE');
     currentGameController.startGame(selectedGameMode);
 
 });
 
 UI.getElement('restartButton').addEventListener('click', fullReset);
+
+const nextButton = UI.getElement('nextButton');
+
+if (nextButton) {
+    nextButton.addEventListener('click', () => {
+        if (currentGameController) {
+            currentGameController.nextRound();
+        }
+    });
+}
 
 function Cell() {
     const EMPTY_CELL = "_";
@@ -257,15 +311,20 @@ function fullReset() {
     gameboard.createBoard();
     UI.renderBoard(gameboard);
     UI.clearInformation();
+    UI.updateStatsUI(0,0,0,0);
     UI.getElement('pvpModeButton').classList.remove('disabled');
     UI.getElement('pveModeButton').classList.remove('disabled');
     UI.setModeButtonsStatus(null);
     UI.setGameModeState({
         startEnabled: false,
-        restartEnabled: false
+        continueEnabled: false,
+        restartEnabled: false,
     });
 
     selectedGameMode = null;
+
+    UI.resetPlayersInfo();
+    UI.enablePlayerInputs(false);
 }
 
 document.querySelectorAll('.cell').forEach(cell => {
@@ -420,7 +479,27 @@ function GameController(gameboard, playerOne, playerTwo) {
 
     function endGame() {
         UI.highlightStep(document.querySelector('.fourth-step'));
-        UI.setGameModeState({ restartEnabled: true });
+        UI.setGameModeState({ continueEnabled: true, restartEnabled: true });
+    }
+
+    function nextRound() {
+        if (!gameFinished) {
+            return;
+        }
+
+        UI.setGameModeState({
+            continueEnabled: false, restartEnabled: false,
+        });
+
+        gameFinished = false;
+        turn = 0;
+        currentPlayer = playerOne;
+        gameboard.createBoard();
+        UI.clearInformation();
+        UI.renderBoard(gameboard);
+        UI.highlightStep(document.querySelector('.third-step'));
+        UI.displayInformation('NEXT ROUND!');
+        UI.displayInformation('MAKE MOVES! DO IT!');
     }
 
     function isGameActive() {
@@ -652,7 +731,7 @@ function GameController(gameboard, playerOne, playerTwo) {
 
     }
 
-    return { GameStatistic, humanTurn, computerTurn, isGameActive, startGame }
+    return { GameStatistic, humanTurn, computerTurn, isGameActive, startGame, nextRound }
 }
 
 

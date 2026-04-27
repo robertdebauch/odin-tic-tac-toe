@@ -7,7 +7,9 @@
     --background-color: #837667;
     --active-color: #FCCA46;
     --final-step: #23CE6B;
+    --neutral-color: #E5EAFA;
     --shadow-color: #0b0a09;
+    --shadow-color-alt: #0b0a0977;
 }
 
 html {
@@ -137,7 +139,8 @@ header button svg {
     font-weight: 400;
     border-radius: 0.25rem;
     padding: 0.5rem 1rem;
-    background-color: var(--primary-color);;
+    background-color: var(--primary-color);
+    ;
     color: var(--text-color);
     transition: padding 0.2s ease-in-out;
     pointer-events: all;
@@ -232,7 +235,7 @@ aside .gamemode-info {
     background-color: var(--primary-color);
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    align-items: center;
     font-size: 1.5rem;
 }
 
@@ -257,7 +260,13 @@ aside .gamemode-info {
     outline: none;
     transition: border-bottom 0.2s ease-in;
     border-bottom: 2px solid transparent;
-    width: 140px;
+    min-width: 140px;
+    width: auto;
+    max-width: 100%;
+}
+
+.edit-icon {
+    width: 2rem;
 }
 
 .player-input:enabled {
@@ -279,24 +288,21 @@ aside .gamemode-info {
     background: var(--active-color);
 }
 
-.player-input.humanoid {
+.humanoid {
     color: var(--pvp-color);
 }
 
-.player-input.computor {
+.player-two {
     color: var(--pve-color);
 }
 
-.player-input:disabled ~ .edit-icon {
-    display: none;
-}
 
-.vs-text {
-    font-size: 1.5rem;
-    font-weight: 500;
-    font-style: normal;
+.divider {
+    background-color: var(--text-color);
+    min-width: 0.125rem;
+    height: 100%;
+    flex-shrink: 0;
 }
-
 
 .gamemode-info> :first-child,
 .gamemode-info> :last-child {
@@ -362,17 +368,38 @@ aside .gamestats {
 /* gameboard */
 
 .gameboard {
+    position: relative;
     display: grid;
-
     grid-template-columns: repeat(3, 1fr);
+}
+
+.gameboard .win-line {
+    position: absolute;
+    height: 8px;
+    background-color: var(--active-color);
+    transform-origin: left center;
+    display: none;
+    z-index: 10;
+    box-shadow: 0 0 10px var(--active-color);
+    border-radius: .25rem;
+    transition: opacity 0.3s ease-in;
 }
 
 .gameboard>.cell {
     min-height: 200px;
     background-color: var(--primary-color);
     font-size: 4rem;
+    font-weight: 800;
     border: 1px solid var(--element-color);
     transition: transform 0.1s ease, background-color 0.3s;
+}
+
+.cell.mark-x {
+    color: var(--pvp-color);
+}
+
+.cell.mark-o {
+    color: var(--pve-color);
 }
 
 .cell.pop {
@@ -383,26 +410,50 @@ aside .gamestats {
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.2);
     }
+
     100% {
         transform: scale(1);
     }
 }
 
+
 .cell.winning-cell {
     background-color: var(--final-step);
+    color: var(--primary-color);
+    pointer-events: none;
+    border: none;
     box-shadow:
-        inset 4px 4px 44px #000000,
-        inset -4px -4px 44px #000000;
+        inset 4px 4px 44px var(--shadow-color-alt),
+        inset -4px -4px 44px var(--shadow-color-alt);
     transition: background-color 0.3s ease;
 }
 
 .gameboard>.cell:hover {
-    box-shadow:
+    /* box-shadow:
         inset 4px 4px 44px #000000,
-        inset -4px -4px 44px #000000;
+        inset -4px -4px 44px #000000; */
+        border: none;
+        opacity: 0.9;
+        box-shadow: 
+            inset 2px 2px 5px var(--shadow-color-alt),
+            inset -2px -2px 5px var(--shadow-color-alt);
+        transform: translateY(1px);
+}
+
+.cell.neutral-cell {
+    opacity: 0.6;
+    background-color: var(--neutral-color);
+    border: 1px solid var(--neutral-color);
+    color: var(--background-color);
+
+    box-shadow: inset 2px 2px 20px var(--shadow-color-alt);
+    filter: blur(1px);
+    transition: background-color 0.3s, opacity 0.3s;
+    pointer-events: none;
 }
 
 /* panels */
@@ -413,7 +464,7 @@ aside .gamestats {
     font-weight: 600;
 }
 
-.game-stat {
+/* .game-stat {
     position: absolute;
     bottom: 260px;
 }
@@ -422,4 +473,4 @@ aside .gamestats {
     position: absolute;
     right: 768px;
     bottom: 260px;
-}
+} */
